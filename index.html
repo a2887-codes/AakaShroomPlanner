@@ -112,10 +112,10 @@
         
         /* --- Tables --- */
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #edf2f7; font-size: 14px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #edf2f7; font-size: 13px; }
         th { background-color: #f8fafc; color: #475569; text-transform: uppercase; font-size: 11px; font-weight: bold; }
         
-        /* --- De-Cluttered Dynamic Outputs Matrix --- */
+        /* --- Dynamic Outputs Matrix --- */
         .output-row { padding: 12px 14px; border-bottom: 1px solid #f1f5f9; background-color: #fafaf9; border-radius: 8px; margin-bottom: 8px; line-height: 1.4; }
         .output-row .title-line { font-weight: 700; color: #1e293b; display: block; font-size: 13.5px; margin-bottom: 2px; }
         .output-row .formula-line { color: #64748b; font-size: 11px; font-family: monospace; display: block; margin-bottom: 4px; }
@@ -152,7 +152,7 @@
             </svg>
             <div class="header-title">
                 <h1>Aakash's Mushroom Planner</h1>
-                <p>As per ICAR DMR Guidelines | Sri Ganganagar Climate Engine</p>
+                <p>ICAR-DMR Biological Profiles Baseline | Sri Ganganagar Thermal Model</p>
             </div>
         </div>
         <div class="kpi-container">
@@ -169,7 +169,7 @@
 
     <main>
         <div class="tab-bar">
-            <button id="btn-prices" onclick="switchTab(this, 'prices')" class="tab-btn active">📊 Market Prices</button>
+            <button id="btn-prices" onclick="switchTab(this, 'prices')" class="tab-btn active">📋 Master Profiles</button>
             <button id="btn-substrate" onclick="switchTab(this, 'substrate')" class="tab-btn">⚖️ Substrate Calc</button>
             <button id="btn-availspawn" onclick="switchTab(this, 'availspawn')" class="tab-btn">🧪 Available Spawn</button>
             <button id="btn-drytarget" onclick="switchTab(this, 'drytarget')" class="tab-btn">🎯 Dry Target Planner</button>
@@ -178,17 +178,20 @@
 
         <div id="tab-prices" class="tab-content active">
             <div class="card">
-                <h2 style="color:#4A3728; margin:0 0 5px 0; font-size:18px;">Live Farm-Gate Values & Dry Yield Index</h2>
-                <p style="color:#64748b; font-size:13px; margin:0 0 15px 0;">Baseline commercial values based on standard wholesale targets.</p>
+                <h2 style="color:#4A3728; margin:0 0 5px 0; font-size:17px;">ICAR-DMR Biological Standard Database Reference</h2>
+                <p style="color:#64748b; font-size:12.5px; margin:0 0 15px 0;">Permanent record tracking baseline optimization parameters and farm-gate target prices.</p>
                 <div style="overflow-x:auto;">
                     <table>
                         <thead>
                             <tr>
                                 <th>Variety</th>
-                                <th>Fresh Price</th>
-                                <th>Dry Price</th>
-                                <th>Dry Recovery %</th>
-                                <th>Base Matrix</th>
+                                <th>Incubation Temp</th>
+                                <th>Cropping Temp</th>
+                                <th>Spawn Run Time</th>
+                                <th>Harvest Window</th>
+                                <th>Spawn Ratio %</th>
+                                <th>Fresh Value</th>
+                                <th>Dry Value</th>
                             </tr>
                         </thead>
                         <tbody id="price-table-body"></tbody>
@@ -202,12 +205,12 @@
                 <div class="card">
                     <h2 style="color:#4A3728; margin:0 0 15px 0; font-size:16px;">Batch Formulation (By Bags)</h2>
                     <div class="form-group">
-                        <label>Target Fungal Species</label>
-                        <select id="sub-species" onchange="runSubstrateCalc()"></select>
+                        <label>Bag Filling Execution Date</label>
+                        <input type="date" id="sub-date" onchange="runSubstrateCalc()">
                     </div>
                     <div class="form-group">
-                        <label>Bag Packing Execution Date</label>
-                        <input type="date" id="sub-date" onchange="runSubstrateCalc()">
+                        <label>Target Fungal Species</label>
+                        <select id="sub-species" onchange="runSubstrateCalc()"></select>
                     </div>
                     <div class="inner-grid">
                         <div class="form-group">
@@ -255,12 +258,12 @@
                 <div class="card">
                     <h2 style="color:#4A3728; margin:0 0 15px 0; font-size:16px;">Fixed Spawn Allocation Engine</h2>
                     <div class="form-group">
-                        <label>Target Fungal Species</label>
-                        <select id="spawn-species" onchange="runAvailSpawnCalc()"></select>
+                        <label>Bag Filling Execution Date</label>
+                        <input type="date" id="spawn-date" onchange="runAvailSpawnCalc()">
                     </div>
                     <div class="form-group">
-                        <label>Inoculation / Packing Date</label>
-                        <input type="date" id="spawn-date" onchange="runAvailSpawnCalc()">
+                        <label>Target Fungal Species</label>
+                        <select id="spawn-species" onchange="runAvailSpawnCalc()"></select>
                     </div>
                     <div class="inner-grid">
                         <div class="form-group">
@@ -308,7 +311,7 @@
                         <input type="number" id="dry-target-weight" value="10" oninput="runDryCalc()">
                     </div>
                     <div style="background-color:#fffbeb; border:1px solid #fef3c7; padding:10px; border-radius:6px; font-size:12px; color:#92400e; font-weight: 500;">
-                        ⚠️ Timeline models lock calculations directly to <strong>January 1, 2027</strong> execution parameters.
+                        ⚠️ Timeline models lock calculations directly to <strong>01-January-2027</strong> execution parameters.
                     </div>
                 </div>
                 <div class="card">
@@ -337,7 +340,7 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Created</th>
+                                <th>Bag Filling Date</th>
                                 <th>Species</th>
                                 <th>Substrate Weight</th>
                                 <th>Bags Lost</th>
@@ -359,13 +362,13 @@
         const SRI_GANGANAGAR_CLIMATE = [14, 18, 24, 31, 37, 41, 36, 34, 33, 29, 21, 15];
 
         const MUSHROOM_PROFILES = {
-            "Oyster": { moisture_pct: 65, spawn_rate_wet_pct: 3.0, incubation_temp: 25, cropping_temp: 20, spawn_run_days: 20, harvest_days: 15, base_substrate: "Wheat/Paddy Straw", yield_basis: "dry_substrate", expected_efficiency_pct: 90.0, fresh_price_per_kg: 180, dry_price_per_kg: 900, dry_recovery_pct: 10.0, requires_supplement: false },
+            "Oyster": { moisture_pct: 65, spawn_rate_wet_pct: 3.0, incubation_temp: 25, cropping_temp: 22, spawn_run_days: 20, harvest_days: 15, base_substrate: "Wheat/Paddy Straw", yield_basis: "dry_substrate", expected_efficiency_pct: 90.0, fresh_price_per_kg: 180, dry_price_per_kg: 900, dry_recovery_pct: 10.0, requires_supplement: false },
             "Button": { moisture_pct: 68, spawn_rate_wet_pct: 0.7, incubation_temp: 23, cropping_temp: 16, spawn_run_days: 15, harvest_days: 30, base_substrate: "Phase II/III Compost", yield_basis: "wet_compost", expected_efficiency_pct: 20.0, fresh_price_per_kg: 140, dry_price_per_kg: 750, dry_recovery_pct: 10.0, requires_supplement: false },
             "Shiitake": { moisture_pct: 60, spawn_rate_wet_pct: 4.0, incubation_temp: 24, cropping_temp: 16, spawn_run_days: 60, harvest_days: 20, base_substrate: "Hardwood Sawdust", yield_basis: "dry_substrate", expected_efficiency_pct: 75.0, fresh_price_per_kg: 500, dry_price_per_kg: 1850, dry_recovery_pct: 11.0, requires_supplement: true, supplement_pct: 20.0, supplement_type: "Wheat Bran" },
-            "Milky": { moisture_pct: 65, spawn_rate_wet_pct: 4.0, incubation_temp: 31, cropping_temp: 28, spawn_run_days: 25, harvest_days: 20, base_substrate: "Paddy Straw", yield_basis: "dry_substrate", expected_efficiency_pct: 95.0, fresh_price_per_kg: 180, dry_price_per_kg: 1000, dry_recovery_pct: 10.0, requires_supplement: false },
-            "Ganoderma": { moisture_pct: 62, spawn_rate_wet_pct: 3.0, incubation_temp: 28, cropping_temp: 25, spawn_run_days: 30, harvest_days: 45, base_substrate: "Hardwood Sawdust", yield_basis: "dry_substrate", expected_efficiency_pct: 20.0, fresh_price_per_kg: 500, dry_price_per_kg: 3000, dry_recovery_pct: 25.0, requires_supplement: true, supplement_pct: 15.0, supplement_type: "Wheat Bran" },
+            "Milky": { moisture_pct: 65, spawn_rate_wet_pct: 4.0, incubation_temp: 32, cropping_temp: 30, spawn_run_days: 25, harvest_days: 20, base_substrate: "Paddy Straw", yield_basis: "dry_substrate", expected_efficiency_pct: 95.0, fresh_price_per_kg: 180, dry_price_per_kg: 1000, dry_recovery_pct: 10.0, requires_supplement: false },
+            "Ganoderma": { moisture_pct: 62, spawn_rate_wet_pct: 3.0, incubation_temp: 30, cropping_temp: 28, spawn_run_days: 25, harvest_days: 45, base_substrate: "Hardwood Sawdust", yield_basis: "dry_substrate", expected_efficiency_pct: 25.0, fresh_price_per_kg: 500, dry_price_per_kg: 3000, dry_recovery_pct: 45.0, requires_supplement: true, supplement_pct: 20.0, supplement_type: "Wheat Bran" },
             "Turkey Tail": { moisture_pct: 60, spawn_rate_wet_pct: 3.0, incubation_temp: 24, cropping_temp: 21, spawn_run_days: 21, harvest_days: 30, base_substrate: "Hardwood Sawdust", yield_basis: "dry_substrate", expected_efficiency_pct: 25.0, fresh_price_per_kg: 600, dry_price_per_kg: 3500, dry_recovery_pct: 25.0, requires_supplement: false },
-            "Lion's Mane": { moisture_pct: 60, spawn_rate_wet_pct: 3.5, incubation_temp: 22, cropping_temp: 18, spawn_run_days: 21, harvest_days: 14, base_substrate: "Hardwood Sawdust", yield_basis: "dry_substrate", expected_efficiency_pct: 100.0, fresh_price_per_kg: 450, dry_price_per_kg: 5500, dry_recovery_pct: 10.0, requires_supplement: true, supplement_pct: 20.0, supplement_type: "Rice Bran" }
+            "Lion's Mane": { moisture_pct: 60, spawn_rate_wet_pct: 3.5, incubation_temp: 22, cropping_temp: 18, spawn_run_days: 14, harvest_days: 14, base_substrate: "Hardwood Sawdust", yield_basis: "dry_substrate", expected_efficiency_pct: 100.0, fresh_price_per_kg: 450, dry_price_per_kg: 5500, dry_recovery_pct: 10.0, requires_supplement: true, supplement_pct: 20.0, supplement_type: "Rice Bran" }
         };
 
         const MUSHROOM_KNOWLEDGE = {
@@ -400,6 +403,20 @@
                 "<strong>Harvest Matrix:</strong> Harvest clusters cleanly before spines drop downward heavily or become soggy, soft, and overly water-logged."
             ]
         };
+
+        function formatCustomDate(dateObj) {
+            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            let day = String(dateObj.getDate()).padStart(2, '0');
+            let month = months[dateObj.getMonth()];
+            let year = dateObj.getFullYear();
+            return day + "-" + month + "-" + year;
+        }
+
+        function parseInputDate(dateStr) {
+            if (!dateStr) return new Date();
+            let parts = dateStr.split('-');
+            return new Date(parts[0], parts[1] - 1, parts[2]);
+        }
 
         function populateSpeciesDropdowns() {
             const dropdowns = ['sub-species', 'spawn-species', 'dry-species'];
@@ -437,18 +454,19 @@
                 var name = entry[0]; var data = entry[1];
                 tbody.innerHTML += '<tr>' +
                     '<td style="font-weight:bold; color:#4A3728;">' + name + '</td>' +
+                    '<td><b>' + data.incubation_temp + '°C</b></td>' +
+                    '<td><b>' + data.cropping_temp + '°C</b></td>' +
+                    '<td>' + data.spawn_run_days + ' Days</td>' +
+                    '<td>' + data.harvest_days + ' Days</td>' +
+                    '<td>' + data.spawn_rate_wet_pct.toFixed(1) + '%</td>' +
                     '<td style="color:#16A34A; font-weight:600;">₹' + data.fresh_price_per_kg + '</td>' +
                     '<td style="color:#b45309; font-weight:600;">₹' + data.dry_price_per_kg + '</td>' +
-                    '<td>' + data.dry_recovery_pct + '%</td>' +
-                    '<td style="font-size:12px; color:#64748b;">' + data.base_substrate + '</td>' +
                 '</tr>';
             });
         }
 
-        function formatDate(date) { return date.toISOString().split('T')[0]; }
-
         function computeClimatePowerDraw(startDateStr, spawnDays, fruitingDays, targetIncTemp, targetCropTemp) {
-            let start = new Date(startDateStr);
+            let start = parseInputDate(startDateStr);
             let current = new Date(start.getTime());
             let tariff = parseFloat(document.getElementById('cost-tariff').value) || 8;
             let totalUnits = 0;
@@ -526,16 +544,16 @@
                 '<div class="output-row"><span>Total Variable Cost:</span><span style="color:#dc2626">₹' + totalCost.toFixed(0) + '</span></div>' +
                 '<div class="output-row" style="font-weight:bold;"><span>Net Profit:</span><span style="color:' + (grossFreshRevenue - totalCost >= 0 ? '#16A34A':'#dc2626') + '">₹' + (grossFreshRevenue - totalCost).toFixed(0) + '</span></div>';
 
-            var today = new Date(startDateStr);
-            var incubationEnd = new Date(today.getTime()); incubationEnd.setDate(today.getDate() + profile.spawn_run_days);
+            var bagFillingDate = parseInputDate(startDateStr);
+            var incubationEnd = new Date(bagFillingDate.getTime()); incubationEnd.setDate(bagFillingDate.getDate() + profile.spawn_run_days);
             var harvestEnd = new Date(incubationEnd.getTime()); harvestEnd.setDate(incubationEnd.getDate() + 2 + profile.harvest_days);
 
             document.getElementById('sub-timeline-output').innerHTML = 
-                '<div class="time-card">📦 <b>Spawn Run Phase</b><br>Ends: ' + formatDate(incubationEnd) + '<br>Hold @ ' + profile.incubation_temp + '°C</div>' +
-                '<div class="time-card" style="background-color:#fff; border: 1px solid #edf2f7;">🌬️ <b>Fruiting Initiation</b><br>Starts: ' + formatDate(new Date(incubationEnd.getTime() + 2*24*60*60*1000)) + '<br>Hold @ ' + profile.cropping_temp + '°C</div>' +
-                '<div class="time-card" style="background-color:#fff; border: 1px solid #edf2f7;">🏁 <b>Final Flush Clear</b><br>Ends: ' + formatDate(harvestEnd) + '</div>';
+                '<div class="time-card">📦 <b>Spawn Run Phase</b><br>Ends: ' + formatCustomDate(incubationEnd) + '<br>Hold @ ' + profile.incubation_temp + '°C</div>' +
+                '<div class="time-card" style="background-color:#fff; border: 1px solid #edf2f7;">🌬️ <b>Fruiting Initiation</b><br>Starts: ' + formatCustomDate(new Date(incubationEnd.getTime() + 2*24*60*60*1000)) + '<br>Hold @ ' + profile.cropping_temp + '°C</div>' +
+                '<div class="time-card" style="background-color:#fff; border: 1px solid #edf2f7;">🏁 <b>Final Harvest Clear</b><br>Ends: ' + formatCustomDate(harvestEnd) + '</div>';
 
-            let launchMonth = today.toLocaleString('default', { month: 'long' });
+            let launchMonth = bagFillingDate.toLocaleString('default', { month: 'long' });
             let insightDiv = document.getElementById('sub-climate-insight');
             if (energyMetrics.units > 180) {
                 insightDiv.style.backgroundColor = "#fff1f2"; insightDiv.style.color = "#9f1239"; insightDiv.style.border = "1px solid #fecdd3";
@@ -547,9 +565,77 @@
             renderKnowledgeDesk(species, 'sub-knowledge-desk');
         }
 
-        // ================= TAB 3: NEW REVERSE ENGINE LOGIC =================
+        // ================= TAB 3: AVAILABLE SPAWN CALCULATOR =================
+        function runAvailSpawnCalc() {
+            var species = document.getElementById('spawn-species').value;
+            if(!species) return;
+            var startDateStr = document.getElementById('spawn-date').value;
+            var availableSpawn = parseFloat(document.getElementById('spawn-weight-input').value) || 0;
+            var targetBagSize = parseFloat(document.getElementById('spawn-bag-size').value) || 2.0;
+            var profile = MUSHROOM_PROFILES[species];
+
+            var totalWetMass = availableSpawn / (profile.spawn_rate_wet_pct / 100.0);
+            var totalBagsPossible = Math.floor(totalWetMass / targetBagSize);
+            
+            var dryMassNeeded = totalWetMass * (1.0 - (profile.moisture_pct / 100.0));
+            var waterNeeded = totalWetMass - dryMassNeeded;
+
+            var baseMaterialDry = dryMassNeeded; var supplementDry = 0;
+            if(profile.requires_supplement) {
+                supplementDry = dryMassNeeded * (profile.supplement_pct / 100.0);
+                baseMaterialDry = dryMassNeeded - supplementDry;
+            }
+
+            var expectedFresh = profile.yield_basis === "dry_substrate" ? dryMassNeeded * (profile.expected_efficiency_pct / 100.0) : totalWetMass * (profile.expected_efficiency_pct / 100.0);
+            var expectedDry = expectedFresh * (profile.dry_recovery_pct / 100.0);
+
+            var costSub = parseFloat(document.getElementById('cost-sub').value) || 8;
+            var costBran = parseFloat(document.getElementById('cost-bran').value) || 25;
+            var costSpawn = parseFloat(document.getElementById('cost-spawn').value) || 120;
+
+            let energyMetrics = computeClimatePowerDraw(startDateStr, profile.spawn_run_days, profile.harvest_days, profile.incubation_temp, profile.cropping_temp);
+            var totalCost = (baseMaterialDry * costSub) + (supplementDry * costBran) + (availableSpawn * costSpawn) + energyMetrics.bill;
+            var grossFreshRevenue = expectedFresh * profile.fresh_price_per_kg;
+
+            document.getElementById('spawn-recipe-output').innerHTML = 
+                '<div class="output-row"><span class="title-line">1. Total Combined Wet Mass Capacity</span><span class="formula-line">Formula: ' + availableSpawn.toFixed(2) + ' kg Available Spawn ÷ ' + profile.spawn_rate_wet_pct + '% Spawn Ratio</span><span class="result-line">' + totalWetMass.toFixed(1) + ' kg Max Mixed Substrate</span></div>' +
+                '<div class="output-row"><span class="title-line">2. Total Operational Bag Output</span><span class="formula-line">Formula: ' + totalWetMass.toFixed(1) + ' kg Wet Mass ÷ ' + targetBagSize.toFixed(1) + ' kg Size/Bag</span><span class="result-line" style="color:#1e3a8a">' + totalBagsPossible + ' Bags Can Be Packed</span></div>' +
+                '<div class="output-row"><span class="title-line">3. Pure Liquid Water Requirement</span><span class="formula-line">Formula: ' + totalWetMass.toFixed(1) + ' kg Combined Mass × ' + profile.moisture_pct + '% Profile Target</span><span class="result-line" style="color:#2563eb">' + waterNeeded.toFixed(1) + ' Liters Soak Water</span></div>' +
+                '<div class="output-row"><span class="title-line">4. Total Dry Substrate To Weigh Out</span><span class="formula-line">Formula: ' + totalWetMass.toFixed(1) + ' kg Combined Mass - ' + waterNeeded.toFixed(1) + ' L Water Volume</span><span class="result-line">' + baseMaterialDry.toFixed(1) + ' kg dry (' + profile.base_substrate + ')</span></div>' +
+                (profile.requires_supplement ? '<div class="output-row" style="color:#b45309;"><span class="title-line">↳ Required Supplement Bran Dry Weight</span><span class="formula-line">Formula: ' + dryMassNeeded.toFixed(1) + ' kg Total Dry × ' + profile.supplement_pct + '% Bran Ratio</span><span class="result-line">' + supplementDry.toFixed(1) + ' kg (' + profile.supplement_type + ')</span></div>' : '');
+
+            document.getElementById('spawn-financial-output').innerHTML = 
+                '<div class="output-row"><span>Projected Fresh Yield:</span><strong style="color:#16A34A">' + expectedFresh.toFixed(1) + ' kg</strong></div>' +
+                '<div class="output-row"><span>Projected Dried Yield:</span><strong>' + expectedDry.toFixed(1) + ' kg</strong></div>' +
+                '<div class="output-row"><span>Climate HVAC Power Bill:</span><span style="color:#b45309; font-weight:600;">₹' + energyMetrics.bill.toFixed(0) + '</span></div>' +
+                '<div class="output-row"><span>Total Operational Cost:</span><span style="color:#dc2626">₹' + totalCost.toFixed(0) + '</span></div>' +
+                '<div class="output-row" style="font-weight:bold;"><span>Net Profit Return:</span><span style="color:' + (grossFreshRevenue - totalCost >= 0 ? '#16A34A':'#dc2626') + '">₹' + (grossFreshRevenue - totalCost).toFixed(0) + '</span></div>';
+
+            var bagFillingDate = parseInputDate(startDateStr);
+            var incubationEnd = new Date(bagFillingDate.getTime()); incubationEnd.setDate(bagFillingDate.getDate() + profile.spawn_run_days);
+            var harvestEnd = new Date(incubationEnd.getTime()); harvestEnd.setDate(incubationEnd.getDate() + 2 + profile.harvest_days);
+
+            document.getElementById('spawn-timeline-output').innerHTML = 
+                '<div class="time-card">📦 <b>Incubation Complete</b><br>Date: ' + formatCustomDate(incubationEnd) + '<br>Target: ' + profile.incubation_temp + '°C</div>' +
+                '<div class="time-card" style="background-color:#fff; border: 1px solid #edf2f7;">🌬️ <b>Fruiting Window</b><br>Starts: ' + formatCustomDate(new Date(incubationEnd.getTime() + 2*24*60*60*1000)) + '<br>Target: ' + profile.cropping_temp + '°C</div>' +
+                '<div class="time-card" style="background-color:#fff; border: 1px solid #edf2f7;">🏁 <b>Final Harvest Clear</b><br>Date: ' + formatCustomDate(harvestEnd) + '</div>';
+
+            let launchMonth = bagFillingDate.toLocaleString('default', { month: 'long' });
+            let insightDiv = document.getElementById('spawn-climate-insight');
+            if (energyMetrics.units > 180) {
+                insightDiv.style.backgroundColor = "#fff1f2"; insightDiv.style.color = "#9f1239"; insightDiv.style.border = "1px solid #fecdd3";
+                insightDiv.innerHTML = "🚨 <b>High Thermal Stress Warning:</b> Your " + launchMonth + " launch window puts your crop cycle into extreme Sri Ganganagar ambient profiles. HVAC metrics will draw approx <b>" + energyMetrics.units.toFixed(0) + " units</b> to sustain cooling protocols.";
+            } else {
+                insightDiv.style.backgroundColor = "#f0fdf4"; insightDiv.style.color = "#166534"; insightDiv.style.border = "1px solid #bbf7d0";
+                insightDiv.innerHTML = "✅  <b>Optimal Energy Efficiency Window:</b> Excellent seasonal alignment. Your cultivation cycle steps into a moderate outdoor temperature baseline, reducing standard load profiles to just <b>" + energyMetrics.units.toFixed(0) + " total units</b>.";
+            }
+            renderKnowledgeDesk(species, 'spawn-knowledge-desk');
+        }
+
+        // ================= TAB 4: REVERSE DRY TARGET PLANNER =================
         function runDryCalc() {
             var species = document.getElementById('dry-species').value;
+            if(!species) return;
             var targetDry = parseFloat(document.getElementById('dry-target-weight').value) || 0;
             var profile = MUSHROOM_PROFILES[species];
 
@@ -577,22 +663,11 @@
             var totalCost = (baseMaterialDry * 8) + (supplementDry * 25) + (spawnNeeded * 120) + energyMetrics.bill;
             var grossRevenueDry = targetDry * profile.dry_price_per_kg;
 
-            // FIXED: Applied 4-step reverse material matrix visualization pattern
             document.getElementById('dry-recipe-output').innerHTML = 
-                '<div class="output-row"><span class="title-line">1. Fresh Yield Equivalent Target</span>' +
-                '<span class="formula-line">Formula: ' + targetDry.toFixed(1) + ' kg Dry Needed ÷ ' + profile.dry_recovery_pct + '% Recovery Rate</span>' +
-                '<span class="result-line">' + requiredFresh.toFixed(1) + ' kg Fresh Weight Required</span></div>' +
-                
-                '<div class="output-row"><span class="title-line">2. Total Bulk Wet Formulation Volume</span>' +
-                '<span class="formula-line">Formula: Reverse Mass Core Matrix (' + profile.yield_basis + ' basis calculation)</span>' +
-                '<span class="result-line">' + totalWetMass.toFixed(1) + ' kg Combined Wet Mass</span></div>' +
-                
-                '<div class="output-row"><span class="title-line">3. Pure Water Balancing Volume</span>' +
-                '<span class="formula-line">Formula: ' + totalWetMass.toFixed(1) + ' kg Wet Mix - ' + requiredDrySubstrate.toFixed(1) + ' kg Solid dry matter</span>' +
-                '<span class="result-line" style="color:#2563eb">' + waterNeeded.toFixed(1) + ' Liters addition</span></div>' +
-                
-                '<div class="output-row"><span class="title-line">4. Dry Substrate and Spawn Breakdown</span>' +
-                '<span class="formula-line">Base Dry Base: ' + baseMaterialDry.toFixed(1) + ' kg (' + profile.base_substrate + ')</span>' +
+                '<div class="output-row"><span class="title-line">1. Fresh Yield Equivalent Target</span><span class="formula-line">Formula: ' + targetDry.toFixed(1) + ' kg Dry Needed ÷ ' + profile.dry_recovery_pct + '% Recovery Rate</span><span class="result-line">' + requiredFresh.toFixed(1) + ' kg Fresh Weight Required</span></div>' +
+                '<div class="output-row"><span class="title-line">2. Total Bulk Wet Formulation Volume</span><span class="formula-line">Formula: Reverse Mass Core Matrix (' + profile.yield_basis + ' basis calculation)</span><span class="result-line">' + totalWetMass.toFixed(1) + ' kg Combined Wet Mass</span></div>' +
+                '<div class="output-row"><span class="title-line">3. Pure Water Balancing Volume</span><span class="formula-line">Formula: ' + totalWetMass.toFixed(1) + ' kg Wet Mix - ' + requiredDrySubstrate.toFixed(1) + ' kg Solid dry matter</span><span class="result-line" style="color:#2563eb">' + waterNeeded.toFixed(1) + ' Liters addition</span></div>' +
+                '<div class="output-row"><span class="title-line">4. Dry Substrate and Spawn Breakdown</span><span class="formula-line">Base Dry Base: ' + baseMaterialDry.toFixed(1) + ' kg (' + profile.base_substrate + ')</span>' +
                 (profile.requires_supplement ? '<span class="formula-line">Supplement Matrix: ' + supplementDry.toFixed(1) + ' kg</span>' : '') +
                 '<span class="result-line" style="color:#b45309">' + spawnNeeded.toFixed(2) + ' kg Spawn Required (' + profile.spawn_rate_wet_pct.toFixed(1) + '% Ratio)</span></div>';
 
@@ -602,83 +677,15 @@
                 '<div class="output-row"><span>Total Production Outlay:</span><span style="color:#dc2626">₹' + totalCost.toFixed(0) + '</span></div>' +
                 '<div class="output-row" style="font-weight:bold;"><span>Net Valuation Margin:</span><span style="color:#16A34A">₹' + (grossRevenueDry - totalCost).toFixed(0) + '</span></div>';
 
+            // AUDITED & FIXED: Restored opening bracket element syntax safely below
             var fixedStart = new Date(2027, 0, 1);
             var incubationEnd = new Date(2027, 0, 1); incubationEnd.setDate(fixedStart.getDate() + profile.spawn_run_days);
             var harvestEnd = new Date(incubationEnd.getTime()); harvestEnd.setDate(incubationEnd.getDate() + 2 + profile.harvest_days);
 
             document.getElementById('dry-timeline-output').innerHTML = 
-                '<div class="time-card" style="background-color:#fff; border: 1px solid #edf2f7;">🧫 <b>Inoculation Day</b><br>' + formatDate(fixedStart) + '</div>' +
-                '<div class="time-card">📦 <b>Spawn Run Complete</b><br>' + formatDate(incubationEnd) + '</div>' +
-                '<div class="time-card" style="background-color:#fff; border: 1px solid #edf2f7;">🧺 <b>Crop Dried Out</b><br>' + formatDate(harvestEnd) + '</div>';
-        }
-
-        // ================= TAB 3: AVAILABLE SPAWN CALCULATOR =================
-        function runAvailSpawnCalc() {
-            var species = document.getElementById('spawn-species').value;
-            if(!species) return;
-            var startDateStr = document.getElementById('spawn-date').value;
-            var availableSpawn = parseFloat(document.getElementById('spawn-weight-input').value) || 0;
-            var targetBagSize = parseFloat(document.getElementById('spawn-bag-size').value) || 2.0;
-            var profile = MUSHROOM_PROFILES[species];
-
-            // Reverse math calculations driven by available spawn weight assets
-            var totalWetMass = availableSpawn / (profile.spawn_rate_wet_pct / 100.0);
-            var totalBagsPossible = Math.floor(totalWetMass / targetBagSize);
-            
-            var dryMassNeeded = totalWetMass * (1.0 - (profile.moisture_pct / 100.0));
-            var waterNeeded = totalWetMass - dryMassNeeded;
-
-            var baseMaterialDry = dryMassNeeded; var supplementDry = 0;
-            if(profile.requires_supplement) {
-                supplementDry = dryMassNeeded * (profile.supplement_pct / 100.0);
-                baseMaterialDry = dryMassNeeded - supplementDry;
-            }
-
-            var expectedFresh = profile.yield_basis === "dry_substrate" ? dryMassNeeded * (profile.expected_efficiency_pct / 100.0) : totalWetMass * (profile.expected_efficiency_pct / 100.0);
-            var expectedDry = expectedFresh * (profile.dry_recovery_pct / 100.0);
-
-            var costSub = parseFloat(document.getElementById('cost-sub').value) || 8;
-            var costBran = parseFloat(document.getElementById('cost-bran').value) || 25;
-            var costSpawn = parseFloat(document.getElementById('cost-spawn').value) || 120;
-
-            let energyMetrics = computeClimatePowerDraw(startDateStr, profile.spawn_run_days, profile.harvest_days, profile.incubation_temp, profile.cropping_temp);
-            var totalCost = (baseMaterialDry * costSub) + (supplementDry * costBran) + (availableSpawn * costSpawn) + energyMetrics.bill;
-            var grossFreshRevenue = expectedFresh * profile.fresh_price_per_kg;
-
-            // Render Tab 3 specific 4-Step Output Layout Pattern Card Matrices
-            document.getElementById('spawn-recipe-output').innerHTML = 
-                '<div class="output-row"><span class="title-line">1. Total Combined Wet Mass Capacity</span><span class="formula-line">Formula: ' + availableSpawn.toFixed(2) + ' kg Available Spawn ÷ ' + profile.spawn_rate_wet_pct + '% Spawn Ratio</span><span class="result-line">' + totalWetMass.toFixed(1) + ' kg Max Mixed Substrate</span></div>' +
-                '<div class="output-row"><span class="title-line">2. Total Operational Bag Output</span><span class="formula-line">Formula: ' + totalWetMass.toFixed(1) + ' kg Wet Mass ÷ ' + targetBagSize.toFixed(1) + ' kg Size/Bag</span><span class="result-line" style="color:#1e3a8a">' + totalBagsPossible + ' Bags Can Be Packed</span></div>' +
-                '<div class="output-row"><span class="title-line">3. Pure Liquid Water Requirement</span><span class="formula-line">Formula: ' + totalWetMass.toFixed(1) + ' kg Combined Mass × ' + profile.moisture_pct + '% Profile Target</span><span class="result-line" style="color:#2563eb">' + waterNeeded.toFixed(1) + ' Liters Soak Water</span></div>' +
-                '<div class="output-row"><span class="title-line">4. Total Dry Substrate To Weigh Out</span><span class="formula-line">Formula: ' + totalWetMass.toFixed(1) + ' kg Combined Mass - ' + waterNeeded.toFixed(1) + ' L Water Volume</span><span class="result-line">' + baseMaterialDry.toFixed(1) + ' kg dry (' + profile.base_substrate + ')</span></div>' +
-                (profile.requires_supplement ? '<div class="output-row" style="color:#b45309;"><span class="title-line">↳ Required Supplement Bran Dry Weight</span><span class="formula-line">Formula: ' + dryMassNeeded.toFixed(1) + ' kg Total Dry × ' + profile.supplement_pct + '% Bran Ratio</span><span class="result-line">' + supplementDry.toFixed(1) + ' kg (' + profile.supplement_type + ')</span></div>' : '');
-
-            document.getElementById('spawn-financial-output').innerHTML = 
-                '<div class="output-row"><span>Projected Fresh Yield:</span><strong style="color:#16A34A">' + expectedFresh.toFixed(1) + ' kg</strong></div>' +
-                '<div class="output-row"><span>Projected Dried Yield:</span><strong>' + expectedDry.toFixed(1) + ' kg</strong></div>' +
-                '<div class="output-row"><span>Climate HVAC Power Bill:</span><span style="color:#b45309; font-weight:600;">₹' + energyMetrics.bill.toFixed(0) + '</span></div>' +
-                '<div class="output-row"><span>Total Operational Cost:</span><span style="color:#dc2626">₹' + totalCost.toFixed(0) + '</span></div>' +
-                '<div class="output-row" style="font-weight:bold;"><span>Net Profit Return:</span><span style="color:' + (grossFreshRevenue - totalCost >= 0 ? '#16A34A':'#dc2626') + '">₹' + (grossFreshRevenue - totalCost).toFixed(0) + '</span></div>';
-
-            var today = new Date(startDateStr);
-            var incubationEnd = new Date(today.getTime()); incubationEnd.setDate(today.getDate() + profile.spawn_run_days);
-            var harvestEnd = new Date(incubationEnd.getTime()); harvestEnd.setDate(incubationEnd.getDate() + 2 + profile.harvest_days);
-
-            document.getElementById('spawn-timeline-output').innerHTML = 
-                '<div class="time-card">📦 <b>Incubation Complete</b><br>Date: ' + formatDate(incubationEnd) + '<br>Target: ' + profile.incubation_temp + '°C</div>' +
-                '<div class="time-card" style="background-color:#fff; border: 1px solid #edf2f7;">🌬️ <b>Fruiting Window</b><br>Starts: ' + formatDate(new Date(incubationEnd.getTime() + 2*24*60*60*1000)) + '<br>Target: ' + profile.cropping_temp + '°C</div>' +
-                '<div class="time-card" style="background-color:#fff; border: 1px solid #edf2f7;">🏁 <b>Final Harvest Clear</b><br>Date: ' + formatDate(harvestEnd) + '</div>';
-
-            let launchMonth = today.toLocaleString('default', { month: 'long' });
-            let insightDiv = document.getElementById('spawn-climate-insight');
-            if (energyMetrics.units > 180) {
-                insightDiv.style.backgroundColor = "#fff1f2"; insightDiv.style.color = "#9f1239"; insightDiv.style.border = "1px solid #fecdd3";
-                insightDiv.innerHTML = "🚨 <b>High Thermal Stress Warning:</b> Your " + launchMonth + " launch window puts your crop cycle into extreme Sri Ganganagar ambient profiles. HVAC metrics will draw approx <b>" + energyMetrics.units.toFixed(0) + " units</b> to sustain cooling protocols.";
-            } else {
-                insightDiv.style.backgroundColor = "#f0fdf4"; insightDiv.style.color = "#166534"; insightDiv.style.border = "1px solid #bbf7d0";
-                insightDiv.innerHTML = "✅  <b>Optimal Energy Efficiency Window:</b> Excellent seasonal alignment. Your cultivation cycle steps into a moderate outdoor temperature baseline, reducing standard load profiles to just <b>" + energyMetrics.units.toFixed(0) + " total units</b>.";
-            }
-            renderKnowledgeDesk(species, 'spawn-knowledge-desk');
+                '<div class="time-card" style="background-color:#fff; border: 1px solid #edf2f7;">🧫 <b>Inoculation Day</b><br>' + formatCustomDate(fixedStart) + '</div>' +
+                '<div class="time-card">📦 <b>Spawn Run Complete</b><br>' + formatCustomDate(incubationEnd) + '</div>' +
+                '<div class="time-card" style="background-color:#fff; border: 1px solid #edf2f7;">🧺 <b>Crop Dried Out</b><br>' + formatCustomDate(harvestEnd) + '</div>';
         }
 
         function logBatchRun(sourceMode) {
@@ -708,9 +715,11 @@
             var totalCost = (baseMaterialDry * 8) + (suppDry * 25) + (spawnNeeded * 120) + energyMetrics.bill;
             var grossRev = expectedFresh * profile.fresh_price_per_kg;
 
+            var displayDate = formatCustomDate(parseInputDate(startDateStr));
+
             var newBatch = {
                 id: "BAT-" + Date.now().toString().slice(-5),
-                created: startDateStr,
+                created: displayDate,
                 species: species,
                 qty: qty,
                 wet_mass: totalWetMass.toFixed(1),
@@ -723,7 +732,7 @@
 
             batches.push(newBatch);
             saveData(); renderBatchesTable();
-            alert("Batch successfully saved to terminal storage.");
+            alert("Batch successfully saved to storage logs.");
         }
 
         function saveData() {
