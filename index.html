@@ -3,342 +3,558 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aakash Mushroom Lab & Planner</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        darkbg: '#121214',
-                        cardbg: '#1a1a1e',
-                        accentgreen: '#22c55e'
-                    }
-                }
-            }
-        }
-    </script>
+    <title>Aakash's Mushroom Calculator</title>
     <style>
+        /* --- Core Layout Architecture --- */
+        body {
+            background-color: #FDFBF7;
+            color: #0f172a;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .header-title-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .header-title h1 {
+            color: #4A3728;
+            margin: 0;
+            font-size: 20px;
+        }
+        .header-title p {
+            color: #64748b;
+            margin: 2px 0 0 0;
+            font-size: 12px;
+        }
+        .kpi-container {
+            display: flex;
+            gap: 12px;
+        }
+        .kpi-box {
+            background-color: #f8fafc;
+            border: 1px solid #cbd5e1;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+        }
+        .kpi-val {
+            display: block;
+            font-weight: bold;
+            font-size: 14px;
+            margin-top: 2px;
+        }
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- Tab System Architecture --- */
+        .tab-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+        .tab-btn {
+            background-color: #cbd5e1;
+            color: #0f172a;
+            border: none;
+            padding: 10px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+        .tab-btn.active {
+            background-color: #1e3a8a;
+            color: #ffffff;
+            font-weight: bold;
+        }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .tab-btn.active { border-color: #22c55e; color: #22c55e; background-color: #1a1a1e; }
+        
+        /* --- Cards & Form Framework --- */
+        .card {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            margin-bottom: 20px;
+        }
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        @media (min-width: 768px) {
+            .grid-layout { grid-template-columns: 1fr 2fr; }
+            .inner-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 11px; font-weight: bold; color: #475569; margin-bottom: 5px; text-transform: uppercase; }
+        .form-group select, .form-group input { width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; background-color: #f8fafc; font-size: 14px; color: #0f172a; }
+        
+        /* --- Tables --- */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #edf2f7; font-size: 14px; }
+        th { background-color: #f8fafc; color: #475569; text-transform: uppercase; font-size: 11px; font-weight: bold; }
+        
+        /* --- De-Cluttered Dynamic Outputs Matrix --- */
+        .output-row { padding: 12px 14px; border-bottom: 1px solid #f1f5f9; background-color: #fafaf9; border-radius: 8px; margin-bottom: 8px; line-height: 1.4; }
+        .output-row .title-line { font-weight: 700; color: #1e293b; display: block; font-size: 13.5px; margin-bottom: 2px; }
+        .output-row .formula-line { color: #64748b; font-size: 11px; font-family: monospace; display: block; margin-bottom: 4px; }
+        .output-row .result-line { font-weight: 800; display: block; text-align: right; font-size: 14.5px; color: #0f172a; }
+        
+        .action-btn { width: 100%; background-color: #16A34A; color: white; border: none; padding: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 10px; font-size: 14px; transition: background 0.2s; }
+        .action-btn:hover { background-color: #15803d; }
+        .timeline-box { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 15px; }
+        @media (min-width: 500px) { .timeline-box { grid-template-columns: 1fr 1fr 1fr; } }
+        .time-card { background-color: #FEF9E7; border: 1px solid #fef3c7; padding: 12px; border-radius: 8px; font-size: 12px; color: #4A3728; }
+        .insight-box { margin-top: 15px; padding: 12px; border-radius: 6px; font-size: 12.5px; line-height: 1.4; }
+        
+        /* --- Knowledge Desk References --- */
+        .knowledge-container { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-top: 20px; }
+        .knowledge-header { font-size: 14px; font-weight: bold; color: #1e3a8a; border-bottom: 2px solid #cbd5e1; padding-bottom: 6px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .knowledge-item { font-size: 12.5px; margin-bottom: 10px; line-height: 1.5; }
+        .knowledge-item strong { color: #4A3728; }
     </style>
 </head>
-<body class="bg-darkbg text-gray-200 font-sans min-h-screen">
+<body>
 
-    <header class="bg-cardbg border-b border-gray-800 p-4 sticky top-0 z-50 shadow-md">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-3">
-                <div class="bg-green-600 p-2 rounded-lg text-black font-bold text-xl">🍄</div>
-                <div>
-                    <h1 class="text-xl font-bold tracking-tight text-white">Aakash's ICAR-Aligned Mushroom Enterprise Desk</h1>
-                    <p class="text-xs text-gray-400">v4.0 Production & Spawn Lab Offline System</p>
-                </div>
+    <header>
+        <div class="header-title-container">
+            <svg width="42" height="42" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M32 4C20 4 14 14 14 24C14 26 16 28 20 28H44C48 28 50 26 50 24C50 14 44 4 32 4Z" fill="#A16207"/>
+                <path d="M28 28H36V56C36 58.2 34.2 60 32 60C29.8 60 28 58.2 28 56V28Z" fill="#E2E8F0"/>
+                <path d="M16 42C10 42 6 48 6 52C6 53 7 54 9 54H23C25 54 26 53 26 52C26 48 22 42 16 42Z" fill="#78350F"/>
+                <path d="M14 54H18V60H14V54Z" fill="#CBD5E1"/>
+                <path d="M48 38C43.5 38 40.5 42.5 40.5 45.5C40.5 46.2 41.2 47 42.8 47H53.2C54.8 47 55.5 46.2 55.5 45.5C55.5 42.5 52.5 38 48 38Z" fill="#B45309"/>
+                <path d="M46 47H50V56H46 47Z" fill="#CBD5E1"/>
+                <circle cx="24" cy="12" r="3" fill="#FEF9E7" opacity="0.4"/>
+                <circle cx="40" cy="16" r="2.5" fill="#FEF9E7" opacity="0.4"/>
+                <circle cx="30" cy="22" r="2" fill="#FEF9E7" opacity="0.4"/>
+            </svg>
+            <div class="header-title">
+                <h1>Aakash's Mushroom Planner</h1>
+                <p>As per ICAR DMR Guidelines | Sri Ganganagar Climate Engine</p>
             </div>
-            <div class="flex gap-4 text-xs">
-                <div class="bg-darkbg p-2 rounded border border-gray-800">
-                    <span class="text-gray-400 block">Total Operational Outlay</span>
-                    <span id="kpi-cost" class="text-red-400 font-bold text-sm">₹0.00</span>
-                </div>
-                <div class="bg-darkbg p-2 rounded border border-gray-800">
-                    <span class="text-gray-400 block">Projected Revenue</span>
-                    <span id="kpi-rev" class="text-accentgreen font-bold text-sm">₹0.00</span>
-                </div>
+        </div>
+        <div class="kpi-container">
+            <div class="kpi-box">
+                <span style="color:#64748b; font-weight: 500;">Total Outlay</span>
+                <span id="kpi-cost" class="kpi-val" style="color:#b45309">₹0.00</span>
+            </div>
+            <div class="kpi-box">
+                <span style="color:#64748b; font-weight: 500;">Projected Revenue</span>
+                <span id="kpi-rev" class="kpi-val" style="color:#16A34A">₹0.00</span>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto p-4 sm:p-6">
-        
-        <div class="flex border-b border-gray-800 gap-2 mb-6 overflow-x-auto pb-1">
-            <button onclick="switchTab('prices')" class="tab-btn active px-4 py-2 text-sm font-medium border-b-2 border-transparent transition-all whitespace-nowrap">📊 Market Price Sheet</button>
-            <button onclick="switchTab('substrate')" class="tab-btn px-4 py-2 text-sm font-medium border-b-2 border-transparent transition-all whitespace-nowrap">⚖️ Substrate Calculator</button>
-            <button onclick="switchTab('drytarget')" class="tab-btn px-4 py-2 text-sm font-medium border-b-2 border-transparent transition-all whitespace-nowrap">🎯 Dry Target Planner (2027)</button>
-            <button onclick="switchTab('batches')" class="tab-btn px-4 py-2 text-sm font-medium border-b-2 border-transparent transition-all whitespace-nowrap">📁 Batch Records & QC Logs</button>
+    <main>
+        <div class="tab-bar">
+            <button id="btn-prices" onclick="switchTab(this, 'prices')" class="tab-btn active">📊 Market Prices</button>
+            <button id="btn-substrate" onclick="switchTab(this, 'substrate')" class="tab-btn">⚖️ Substrate Calc</button>
+            <button id="btn-availspawn" onclick="switchTab(this, 'availspawn')" class="tab-btn">🧪 Available Spawn</button>
+            <button id="btn-drytarget" onclick="switchTab(this, 'drytarget')" class="tab-btn">🎯 Dry Target Planner</button>
+            <button id="btn-batches" onclick="switchTab(this, 'batches')" class="tab-btn">📁 Batch Logs & QC</button>
         </div>
 
-        <div id="tab-prices" class="tab-content active space-y-6">
-            <div class="bg-cardbg rounded-xl border border-gray-800 p-6 shadow-sm">
-                <h2 class="text-lg font-bold text-white mb-2">Live Farm-Gate Values & Dry Yield Index</h2>
-                <p class="text-sm text-gray-400 mb-4">Baseline values used for commercial ROI forecasting models.</p>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm text-gray-400">
-                        <thead class="bg-darkbg text-gray-300 uppercase text-xs tracking-wider border-b border-gray-800">
+        <div id="tab-prices" class="tab-content active">
+            <div class="card">
+                <h2 style="color:#4A3728; margin:0 0 5px 0; font-size:18px;">Live Farm-Gate Values & Dry Yield Index</h2>
+                <p style="color:#64748b; font-size:13px; margin:0 0 15px 0;">Baseline commercial values based on standard wholesale targets.</p>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
                             <tr>
-                                <th class="p-3">Variety</th>
-                                <th class="p-3">Fresh Price</th>
-                                <th class="p-3">Dry Price</th>
-                                <th class="p-3">Dry Recovery %</th>
-                                <th class="p-3">Base Matrix</th>
+                                <th>Variety</th>
+                                <th>Fresh Price</th>
+                                <th>Dry Price</th>
+                                <th>Dry Recovery %</th>
+                                <th>Base Matrix</th>
                             </tr>
                         </thead>
-                        <tbody id="price-table-body">
-                            </tbody>
+                        <tbody id="price-table-body"></tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <div id="tab-substrate" class="tab-content space-y-6">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="bg-cardbg p-6 rounded-xl border border-gray-800 space-y-4">
-                    <h2 class="text-lg font-bold text-white">Batch Parameter Configuration</h2>
-                    <div>
-                        <label class="block text-xs uppercase text-gray-400 font-semibold mb-1">Target Fungal Species</label>
-                        <select id="sub-species" onchange="runSubstrateCalc()" class="w-full bg-darkbg border border-gray-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-accentgreen"></select>
+        <div id="tab-substrate" class="tab-content">
+            <div class="grid-layout">
+                <div class="card">
+                    <h2 style="color:#4A3728; margin:0 0 15px 0; font-size:16px;">Batch Formulation (By Bags)</h2>
+                    <div class="form-group">
+                        <label>Target Fungal Species</label>
+                        <select id="sub-species" onchange="runSubstrateCalc()"></select>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs uppercase text-gray-400 font-semibold mb-1">Total Bags</label>
-                            <input type="number" id="sub-qty" value="50" oninput="runSubstrateCalc()" class="w-full bg-darkbg border border-gray-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-accentgreen">
-                        </div>
-                        <div>
-                            <label class="block text-xs uppercase text-gray-400 font-semibold mb-1">Wet Weight/Bag (kg)</label>
-                            <input type="number" id="sub-weight" value="2.0" step="0.1" oninput="runSubstrateCalc()" class="w-full bg-darkbg border border-gray-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-accentgreen">
-                        </div>
+                    <div class="form-group">
+                        <label>Bag Packing Execution Date</label>
+                        <input type="date" id="sub-date" onchange="runSubstrateCalc()">
                     </div>
-                    <hr class="border-gray-800 my-4">
-                    <h3 class="text-xs uppercase text-gray-400 font-bold tracking-wider">Granular Operational Costs (INR)</h3>
-                    <div class="grid grid-cols-2 gap-2 text-xs">
-                        <div>
-                            <label class="text-gray-500 block">Dry Substrate/kg</label>
-                            <input type="number" id="cost-sub" value="8" oninput="runSubstrateCalc()" class="w-full bg-darkbg border border-gray-800 rounded p-1 text-gray-300">
+                    <div class="inner-grid">
+                        <div class="form-group">
+                            <label>Total Bags Planned</label>
+                            <input type="number" id="sub-qty" value="50" oninput="runSubstrateCalc()">
                         </div>
-                        <div>
-                            <label class="text-gray-500 block">Bran Supplement/kg</label>
-                            <input type="number" id="cost-bran" value="25" oninput="runSubstrateCalc()" class="w-full bg-darkbg border border-gray-800 rounded p-1 text-gray-300">
-                        </div>
-                        <div>
-                            <label class="text-gray-500 block">Pure Spawn/kg</label>
-                            <input type="number" id="cost-spawn" value="120" oninput="runSubstrateCalc()" class="w-full bg-darkbg border border-gray-800 rounded p-1 text-gray-300">
-                        </div>
-                        <div>
-                            <label class="text-gray-500 block">Batch Overhead</label>
-                            <input type="number" id="cost-overhead" value="500" oninput="runSubstrateCalc()" class="w-full bg-darkbg border border-gray-800 rounded p-1 text-gray-300">
+                        <div class="form-group">
+                            <label>Wet Weight/Bag (kg)</label>
+                            <input type="number" id="sub-weight" value="2.0" step="0.1" oninput="runSubstrateCalc()">
                         </div>
                     </div>
-                    <button onclick="logBatchRun()" class="w-full bg-accentgreen hover:bg-green-600 text-black text-sm font-bold py-2.5 px-4 rounded transition-all mt-4">💾 Log and Save Current Batch</button>
+                    <hr style="border:0; border-top:1px solid #e2e8f0; margin:15px 0;">
+                    <label style="display:block; font-size:11px; font-weight:bold; color:#475569; margin-bottom:8px; text-transform:uppercase;">Granular Material Costs (INR)</label>
+                    <div class="inner-grid" style="grid-template-columns:1fr 1fr;">
+                        <div class="form-group"><label>Substrate/kg</label><input type="number" id="cost-sub" value="8" oninput="runSubstrateCalc()"></div>
+                        <div class="form-group"><label>Bran/kg</label><input type="number" id="cost-bran" value="25" oninput="runSubstrateCalc()"></div>
+                        <div class="form-group"><label>Spawn/kg</label><input type="number" id="cost-spawn" value="120" oninput="runSubstrateCalc()"></div>
+                        <div class="form-group"><label>Electricity (₹/Unit)</label><input type="number" id="cost-tariff" value="8" oninput="runSubstrateCalc()"></div>
+                    </div>
+                    <button onclick="logBatchRun('substrate')" class="action-btn">💾 Save Current Batch</button>
                 </div>
-
-                <div class="lg:col-span-2 space-y-6">
-                    <div class="bg-cardbg p-6 rounded-xl border border-gray-800 grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <h3 class="text-sm font-bold uppercase tracking-wider text-accentgreen mb-3">🛠️ Required Raw Materials</h3>
-                            <div id="sub-recipe-output" class="space-y-2 text-sm">
-                                </div>
-                        </div>
-                        <div>
-                            <h3 class="text-sm font-bold uppercase tracking-wider text-blue-400 mb-3">📈 Commercial Projections</h3>
-                            <div id="sub-financial-output" class="space-y-2 text-sm">
-                                </div>
-                        </div>
+                
+                <div>
+                    <div class="card">
+                        <h3 style="color:#4A3728; font-size:14px; margin-top:0; margin-bottom:12px;">🛠️ Required Raw Materials Ledger</h3>
+                        <div id="sub-recipe-output"></div>
+                        <h3 style="color:#b45309; font-size:14px; margin-top:20px; margin-bottom:12px;">📈 Commercial Revenue Projections</h3>
+                        <div id="sub-financial-output"></div>
                     </div>
-                    <div class="bg-cardbg p-6 rounded-xl border border-gray-800">
-                        <h3 class="text-sm font-bold uppercase tracking-wider text-yellow-500 mb-3">📅 Environmental & Calendar Tracking</h3>
-                        <div id="sub-timeline-output" class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-                            </div>
+                    <div class="card">
+                        <h3 style="color:#333; font-size:14px; margin-top:0;">📅 Cycle Milestones & HVAC Projections</h3>
+                        <div id="sub-timeline-output" class="timeline-box"></div>
+                        <div id="sub-climate-insight" class="insight-box"></div>
+                        <div class="knowledge-container">
+                            <div class="knowledge-header">📋 Lab Rules & Troubleshooting Desk</div>
+                            <div id="sub-knowledge-desk"></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div id="tab-drytarget" class="tab-content space-y-6">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="bg-cardbg p-6 rounded-xl border border-gray-800 space-y-4">
-                    <h2 class="text-lg font-bold text-white">Reverse Target Configuration</h2>
-                    <p class="text-xs text-gray-400">Calculates exactly how much material to buy and mix to hit a fixed market order.</p>
-                    <div>
-                        <label class="block text-xs uppercase text-gray-400 font-semibold mb-1">Target Fungal Species</label>
-                        <select id="dry-species" onchange="runDryCalc()" class="w-full bg-darkbg border border-gray-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-accentgreen"></select>
+        <div id="tab-availspawn" class="tab-content">
+            <div class="grid-layout">
+                <div class="card">
+                    <h2 style="color:#4A3728; margin:0 0 15px 0; font-size:16px;">Fixed Spawn Allocation Engine</h2>
+                    <div class="form-group">
+                        <label>Target Fungal Species</label>
+                        <select id="spawn-species" onchange="runAvailSpawnCalc()"></select>
                     </div>
-                    <div>
-                        <label class="block text-xs uppercase text-gray-400 font-semibold mb-1">Target Dry Yield Needed (kg)</label>
-                        <input type="number" id="dry-target-weight" value="10" step="1" oninput="runDryCalc()" class="w-full bg-darkbg border border-gray-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-accentgreen">
+                    <div class="form-group">
+                        <label>Inoculation / Packing Date</label>
+                        <input type="date" id="spawn-date" onchange="runAvailSpawnCalc()">
                     </div>
-                    <div class="p-3 bg-darkbg border border-yellow-800/30 rounded text-xs text-yellow-500/90">
-                        ⚠️ <strong>Timeline Policy Warning:</strong> Per structural guidelines, all reverse dry target models lock production initialization parameters directly to <strong>January 1, 2027</strong>.
+                    <div class="inner-grid">
+                        <div class="form-group">
+                            <label>Exact Spawn Available (kg)</label>
+                            <input type="number" id="spawn-weight-input" value="10" step="0.1" oninput="runAvailSpawnCalc()">
+                        </div>
+                        <div class="form-group">
+                            <label>Preferred Bag Size (kg)</label>
+                            <input type="number" id="spawn-bag-size" value="2.0" step="0.1" oninput="runAvailSpawnCalc()">
+                        </div>
                     </div>
+                    <button onclick="logBatchRun('spawn')" class="action-btn">💾 Save Current Batch</button>
                 </div>
-
-                <div class="lg:col-span-2 bg-cardbg p-6 rounded-xl border border-gray-800 space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <h3 class="text-sm font-bold uppercase tracking-wider text-accentgreen mb-3">📋 Reverse Mass Recipe Mix</h3>
-                            <div id="dry-recipe-output" class="space-y-2 text-sm"></div>
-                        </div>
-                        <div>
-                            <h3 class="text-sm font-bold uppercase tracking-wider text-blue-400 mb-3">💰 Estimated Wholesale Economics</h3>
-                            <div id="dry-financial-output" class="space-y-2 text-sm"></div>
-                        </div>
+                
+                <div>
+                    <div class="card">
+                        <h3 style="color:#4A3728; font-size:14px; margin-top:0; margin-bottom:12px;">📋 Reversed Mass Recipe Output</h3>
+                        <div id="spawn-recipe-output"></div>
+                        <h3 style="color:#b45309; font-size:14px; margin-top:20px; margin-bottom:12px;">💰 Operational Economics</h3>
+                        <div id="spawn-financial-output"></div>
                     </div>
-                    <hr class="border-gray-800">
-                    <div>
-                        <h3 class="text-sm font-bold uppercase tracking-wider text-yellow-500 mb-3">⏱️ 2027 Inoculation Timeline Schedules</h3>
-                        <div id="dry-timeline-output" class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs"></div>
+                    <div class="card">
+                        <h3 style="color:#333; font-size:14px; margin-top:0;">🏁 Production Track Timeline Schedule</h3>
+                        <div id="spawn-timeline-output" class="timeline-box"></div>
+                        <div id="spawn-climate-insight" class="insight-box"></div>
+                        <div class="knowledge-container">
+                            <div class="knowledge-header">📋 Lab Rules & Troubleshooting Desk</div>
+                            <div id="spawn-knowledge-desk"></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div id="tab-batches" class="tab-content space-y-6">
-            <div class="bg-cardbg rounded-xl border border-gray-800 p-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
-                    <div>
-                        <h2 class="text-lg font-bold text-white">Active Logs & Quality Assurance Control Desk</h2>
-                        <p class="text-xs text-gray-400">Update actual flush yields and track batch contamination loss rates.</p>
+        <div id="tab-drytarget" class="tab-content">
+            <div class="grid-layout">
+                <div class="card">
+                    <h2 style="color:#4A3728; margin:0 0 15px 0; font-size:16px;">Reverse Plan Targets</h2>
+                    <div class="form-group">
+                        <label>Target Fungal Species</label>
+                        <select id="dry-species" onchange="runDryCalc()"></select>
                     </div>
-                    <button onclick="clearDatabase()" class="text-xs bg-red-900/40 text-red-400 border border-red-800 hover:bg-red-900 px-3 py-1.5 rounded transition-all">⚠️ Clear Data Log</button>
+                    <div class="form-group">
+                        <label>Target Dry Yield Needed (kg)</label>
+                        <input type="number" id="dry-target-weight" value="10" oninput="runDryCalc()">
+                    </div>
+                    <div style="background-color:#fffbeb; border:1px solid #fef3c7; padding:10px; border-radius:6px; font-size:12px; color:#92400e; font-weight: 500;">
+                        ⚠️ Timeline models lock calculations directly to <strong>January 1, 2027</strong> execution parameters.
+                    </div>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm text-gray-400">
-                        <thead class="bg-darkbg text-gray-300 uppercase text-xs tracking-wider border-b border-gray-800">
+                <div class="card">
+                    <h3 style="color:#4A3728; font-size:14px; margin-top:0; margin-bottom:12px;">📋 Contract Recipe Requirements</h3>
+                    <div id="dry-recipe-output"></div>
+                    <h3 style="color:#b45309; font-size:14px; margin-top:20px; margin-bottom:12px;">💰 Projected Valuation Economics</h3>
+                    <div id="dry-financial-output"></div>
+                    <hr style="border:0; border-top:1px solid #e2e8f0; margin:20px 0;">
+                    <h3 style="color:#333; font-size:14px; margin:0 0 10px 0;">⏱️ 2027 Schedule Inoculation Track</h3>
+                    <div id="dry-timeline-output" class="timeline-box"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-batches" class="tab-content">
+            <div class="card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <div>
+                        <h2 style="color:#4A3728; margin:0; font-size:18px;">Active Quality Assurance Logs</h2>
+                        <p style="color:#64748b; font-size:12px; margin:2px 0 0 0;">Verify flush weights total vs contamination constraints.</p>
+                    </div>
+                    <button onclick="clearDatabase()" style="background-color:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; padding:6px 12px; font-size:11px; font-weight:bold; border-radius:4px; cursor:pointer;">⚠️ Clear Logs</button>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
                             <tr>
-                                <th class="p-3">Batch ID</th>
-                                <th class="p-3">Created</th>
-                                <th class="p-3">Species</th>
-                                <th class="p-3">Substrate Weight</th>
-                                <th class="p-3">Bags Lost</th>
-                                <th class="p-3">Harvest Yield</th>
-                                <th class="p-3">Status / Action</th>
+                                <th>ID</th>
+                                <th>Created</th>
+                                <th>Species</th>
+                                <th>Substrate Weight</th>
+                                <th>Bags Lost</th>
+                                <th>Harvest Yield</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody id="batch-table-body">
-                            </tbody>
+                        <tbody id="batch-table-body"></tbody>
                     </table>
                 </div>
             </div>
         </div>
-
     </main>
 
     <script>
-        // 1. DATA MATRIX STORAGE
+        document.getElementById('sub-date').value = new Date().toISOString().split('T')[0];
+        document.getElementById('spawn-date').value = new Date().toISOString().split('T')[0];
+
+        const SRI_GANGANAGAR_CLIMATE = [14, 18, 24, 31, 37, 41, 36, 34, 33, 29, 21, 15];
+
         const MUSHROOM_PROFILES = {
-            "Oyster": { moisture_pct: 65, spawn_rate_wet_pct: 3.0, incubation_temp: "24-28°C", cropping_temp: "18-22°C", spawn_run_days: 20, harvest_days: 15, base_substrate: "Wheat/Paddy Straw", yield_basis: "dry_substrate", expected_efficiency_pct: 90.0, fresh_price_per_kg: 180, dry_price_per_kg: 900, dry_recovery_pct: 10.0, requires_supplement: false, supplement_pct: 0 },
-            "Button": { moisture_pct: 68, spawn_rate_wet_pct: 0.7, incubation_temp: "22-24°C", cropping_temp: "14-18°C", spawn_run_days: 15, harvest_days: 30, base_substrate: "Phase II/III Compost", yield_basis: "wet_compost", expected_efficiency_pct: 20.0, fresh_price_per_kg: 140, dry_price_per_kg: 750, dry_recovery_pct: 10.0, requires_supplement: false, supplement_pct: 0 },
-            "Shiitake": { moisture_pct: 60, spawn_rate_wet_pct: 4.0, incubation_temp: "22-25°C", cropping_temp: "15-18°C", spawn_run_days: 60, harvest_days: 20, base_substrate: "Hardwood Sawdust", yield_basis: "dry_substrate", expected_efficiency_pct: 75.0, fresh_price_per_kg: 500, dry_price_per_kg: 1850, dry_recovery_pct: 11.0, requires_supplement: true, supplement_pct: 20.0, supplement_type: "Wheat Bran" },
-            "Milky": { moisture_pct: 65, spawn_rate_wet_pct: 4.0, incubation_temp: "28-35°C", cropping_temp: "26-30°C", spawn_run_days: 25, harvest_days: 20, base_substrate: "Paddy Straw", yield_basis: "dry_substrate", expected_efficiency_pct: 95.0, fresh_price_per_kg: 180, dry_price_per_kg: 1000, dry_recovery_pct: 10.0, requires_supplement: false, supplement_pct: 0 },
-            "Ganoderma": { moisture_pct: 62, spawn_rate_wet_pct: 3.0, incubation_temp: "25-30°C", cropping_temp: "22-28°C", spawn_run_days: 30, harvest_days: 45, base_substrate: "Hardwood Sawdust", yield_basis: "dry_substrate", expected_efficiency_pct: 20.0, fresh_price_per_kg: 500, dry_price_per_kg: 3000, dry_recovery_pct: 25.0, requires_supplement: true, supplement_pct: 15.0, supplement_type: "Wheat Bran" },
-            "Turkey Tail": { moisture_pct: 60, spawn_rate_wet_pct: 3.0, incubation_temp: "22-25°C", cropping_temp: "18-24°C", spawn_run_days: 21, harvest_days: 30, base_substrate: "Hardwood Sawdust", yield_basis: "dry_substrate", expected_efficiency_pct: 25.0, fresh_price_per_kg: 600, dry_price_per_kg: 3500, dry_recovery_pct: 25.0, requires_supplement: false, supplement_pct: 0 },
-            "Lion's Mane": { moisture_pct: 60, spawn_rate_wet_pct: 3.5, incubation_temp: "20-24°C", cropping_temp: "16-20°C", spawn_run_days: 21, harvest_days: 14, base_substrate: "Hardwood Sawdust", yield_basis: "dry_substrate", expected_efficiency_pct: 100.0, fresh_price_per_kg: 450, dry_price_per_kg: 5500, dry_recovery_pct: 10.0, requires_supplement: true, supplement_pct: 20.0, supplement_type: "Rice Bran" }
+            "Oyster": { moisture_pct: 65, spawn_rate_wet_pct: 3.0, incubation_temp: 25, cropping_temp: 20, spawn_run_days: 20, harvest_days: 15, base_substrate: "Wheat/Paddy Straw", yield_basis: "dry_substrate", expected_efficiency_pct: 90.0, fresh_price_per_kg: 180, dry_price_per_kg: 900, dry_recovery_pct: 10.0, requires_supplement: false },
+            "Button": { moisture_pct: 68, spawn_rate_wet_pct: 0.7, incubation_temp: 23, cropping_temp: 16, spawn_run_days: 15, harvest_days: 30, base_substrate: "Phase II/III Compost", yield_basis: "wet_compost", expected_efficiency_pct: 20.0, fresh_price_per_kg: 140, dry_price_per_kg: 750, dry_recovery_pct: 10.0, requires_supplement: false },
+            "Shiitake": { moisture_pct: 60, spawn_rate_wet_pct: 4.0, incubation_temp: 24, cropping_temp: 16, spawn_run_days: 60, harvest_days: 20, base_substrate: "Hardwood Sawdust", yield_basis: "dry_substrate", expected_efficiency_pct: 75.0, fresh_price_per_kg: 500, dry_price_per_kg: 1850, dry_recovery_pct: 11.0, requires_supplement: true, supplement_pct: 20.0, supplement_type: "Wheat Bran" },
+            "Milky": { moisture_pct: 65, spawn_rate_wet_pct: 4.0, incubation_temp: 31, cropping_temp: 28, spawn_run_days: 25, harvest_days: 20, base_substrate: "Paddy Straw", yield_basis: "dry_substrate", expected_efficiency_pct: 95.0, fresh_price_per_kg: 180, dry_price_per_kg: 1000, dry_recovery_pct: 10.0, requires_supplement: false },
+            "Ganoderma": { moisture_pct: 62, spawn_rate_wet_pct: 3.0, incubation_temp: 28, cropping_temp: 25, spawn_run_days: 30, harvest_days: 45, base_substrate: "Hardwood Sawdust", yield_basis: "dry_substrate", expected_efficiency_pct: 20.0, fresh_price_per_kg: 500, dry_price_per_kg: 3000, dry_recovery_pct: 25.0, requires_supplement: true, supplement_pct: 15.0, supplement_type: "Wheat Bran" },
+            "Turkey Tail": { moisture_pct: 60, spawn_rate_wet_pct: 3.0, incubation_temp: 24, cropping_temp: 21, spawn_run_days: 21, harvest_days: 30, base_substrate: "Hardwood Sawdust", yield_basis: "dry_substrate", expected_efficiency_pct: 25.0, fresh_price_per_kg: 600, dry_price_per_kg: 3500, dry_recovery_pct: 25.0, requires_supplement: false },
+            "Lion's Mane": { moisture_pct: 60, spawn_rate_wet_pct: 3.5, incubation_temp: 22, cropping_temp: 18, spawn_run_days: 21, harvest_days: 14, base_substrate: "Hardwood Sawdust", yield_basis: "dry_substrate", expected_efficiency_pct: 100.0, fresh_price_per_kg: 450, dry_price_per_kg: 5500, dry_recovery_pct: 10.0, requires_supplement: true, supplement_pct: 20.0, supplement_type: "Rice Bran" }
         };
 
-        let batches = JSON.parse(localStorage.getItem('mushroom_batches')) || [];
+        const MUSHROOM_KNOWLEDGE = {
+            "Oyster": [
+                "<strong>Mixing Protocol:</strong> Thorough bulk mixing of grain spawn inside straw yields vastly superior colonization speeds. Avoid layered/perimeter spawning which prompts slow mycelium zones and thermal decay hotspots.",
+                "<strong>CO2 Visual Warning:</strong> If fresh air exhaust drops, high CO2 stretches stipes out into long, thick, elastic branches tipped with tiny, pale, unformed caps.",
+                "<strong>Light Sensitivity:</strong> Requires low-wattage lighting activation to initiate pinheads. Complete dark room transitions during cropping yield malformed, non-pigmented growth clusters."
+            ],
+            "Button": [
+                "<strong>Compost Management:</strong> Ensure stable Phase II/III standard moisture profiles before packing. Never compress substrate excessively to preserve critical anaerobic prevention gaps.",
+                "<strong>Casing Soil Parameters:</strong> Requires application of pasteurized casing soil mix (pH 7.5+) to force button pinhead flushes. Maintain uniform casing moisture without water logging underlying compost matrices.",
+                "<strong>Ventilation Shift:</strong> Keep room sealed during spawn run. Drop CO2 heavily via aggressive fresh air flush to surprise mycelium into cropping button initials."
+            ],
+            "Shiitake": [
+                "<strong>The Bumping Trap:</strong> Blocks must be kept in darkness until fully turned brown with bumpy 'popcorn' textures. Stripping plastic off raw white sawdust blocks triggers heavy green Trichoderma mold losses.",
+                "<strong>Thermal Shock Action:</strong> A clean cold-water soak (14-18°C) combined with structural physical agitation breaks vegetative stasis and triggers uniform log flushes."
+            ],
+            "Milky": [
+                "<strong>Casing Mandate:</strong> This species will completely refuse to fruit without a highly alkaline casing soil layer (pH 8.0-8.5) layered evenly above fully colonized paddy straw beds.",
+                "<strong>Heat Thriving Dynamics:</strong> Requires robust operational room temperatures (30-35°C) and substantial daylight illumination vectors to form premium thick stalks."
+            ],
+            "Ganoderma": [
+                "<strong>Morphology Control:</strong> High CO2 restricts growth into elongated vertical 'antler' formations. Maximizing oxygen cycles drops CO2, causing antlers to expand into broad, glossy, shelf-like medicinal caps.",
+                "<strong>Spore Desiccation Shift:</strong> Drop room humidity down from 90% to 60% during maturity to allow thick spore dust coats to accumulate safely across red varnished cap margins."
+            ],
+            "Turkey Tail": [
+                "<strong>Moisture Retention:</strong> Keep sawdust logs tightly bounded. Spray ultra-fine humidity mists; large water droplets directly striking young rosettes cause rotting discolorations.",
+                "<strong>Harvest Window:</strong> Cut wild fan structures flush against wood faces once active white growing margins fully darken into solid multi-zoned bands."
+            ],
+            "Lion's Mane": [
+                "<strong>Delicate Spine Care:</strong> Maintain constant room relative humidity at 85%. Spikes in dry air turn the pristine white icicle spines yellow, completely destroying premium value metrics.",
+                "<strong>Harvest Matrix:</strong> Harvest clusters cleanly before spines drop downward heavily or become soggy, soft, and overly water-logged."
+            ]
+        };
 
-        // 2. LIFECYCLE INITIALIZER
+        function populateSpeciesDropdowns() {
+            const dropdowns = ['sub-species', 'spawn-species', 'dry-species'];
+            dropdowns.forEach(id => {
+                var el = document.getElementById(id);
+                el.innerHTML = '';
+                Object.keys(MUSHROOM_PROFILES).forEach(name => {
+                    el.options[el.options.length] = new Option(name, name);
+                });
+            });
+        }
+
         window.onload = function() {
             populateSpeciesDropdowns();
             renderPriceSheet();
             runSubstrateCalc();
+            runAvailSpawnCalc();
             runDryCalc();
             renderBatchesTable();
         };
 
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        function switchTab(btnElement, tabId) {
+            var contents = document.getElementsByClassName('tab-content');
+            for (var i = 0; i < contents.length; i++) { contents[i].classList.remove('active'); }
+            var buttons = document.getElementsByClassName('tab-btn');
+            for (var i = 0; i < buttons.length; i++) { buttons[i].classList.remove('active'); }
             document.getElementById('tab-' + tabId).classList.add('active');
-            event.currentTarget.classList.add('active');
-        }
-
-        function populateSpeciesDropdowns() {
-            const subSel = document.getElementById('sub-species');
-            const drySel = document.getElementById('dry-species');
-            Object.keys(MUSHROOM_PROFILES).forEach(name => {
-                subSel.options[subSel.options.length] = new Option(name, name);
-                drySel.options[drySel.options.length] = new Option(name, name);
-            });
+            btnElement.classList.add('active');
         }
 
         function renderPriceSheet() {
-            const tbody = document.getElementById('price-table-body');
+            var tbody = document.getElementById('price-table-body');
             tbody.innerHTML = '';
-            Object.entries(MUSHROOM_PROFILES).forEach(([name, data]) => {
-                tbody.innerHTML += `
-                    <tr class="border-b border-gray-800 hover:bg-gray-900/30 transition-all">
-                        <td class="p-3 text-white font-semibold">${name}</td>
-                        <td class="p-3 text-accentgreen">₹${data.fresh_price_per_kg}</td>
-                        <td class="p-3 text-yellow-500">₹${data.dry_price_per_kg}</td>
-                        <td class="p-3">${data.dry_recovery_pct}%</td>
-                        <td class="p-3 text-xs text-gray-500">${data.base_substrate}</td>
-                    </tr>`;
+            Object.entries(MUSHROOM_PROFILES).forEach(function(entry) {
+                var name = entry[0]; var data = entry[1];
+                tbody.innerHTML += '<tr>' +
+                    '<td style="font-weight:bold; color:#4A3728;">' + name + '</td>' +
+                    '<td style="color:#16A34A; font-weight:600;">₹' + data.fresh_price_per_kg + '</td>' +
+                    '<td style="color:#b45309; font-weight:600;">₹' + data.dry_price_per_kg + '</td>' +
+                    '<td>' + data.dry_recovery_pct + '%</td>' +
+                    '<td style="font-size:12px; color:#64748b;">' + data.base_substrate + '</td>' +
+                '</tr>';
             });
         }
 
-        function formatDate(date) {
-            return date.toISOString().split('T')[0];
+        function formatDate(date) { return date.toISOString().split('T')[0]; }
+
+        function computeClimatePowerDraw(startDateStr, spawnDays, fruitingDays, targetIncTemp, targetCropTemp) {
+            let start = new Date(startDateStr);
+            let current = new Date(start.getTime());
+            let tariff = parseFloat(document.getElementById('cost-tariff').value) || 8;
+            let totalUnits = 0;
+            let totalDays = spawnDays + fruitingDays;
+            
+            for (let d = 0; d < totalDays; d++) {
+                let currentMonth = current.getMonth();
+                let ambientTemp = SRI_GANGANAGAR_CLIMATE[currentMonth];
+                let targetTemp = (d < spawnDays) ? targetIncTemp : targetCropTemp;
+                let tempGap = Math.abs(ambientTemp - targetTemp);
+                
+                let baseDailyUnits = 1.5;
+                if (ambientTemp > targetTemp) { baseDailyUnits += (tempGap * 0.85); }
+                else if (ambientTemp < targetTemp) { baseDailyUnits += (tempGap * 0.45); }
+                
+                totalUnits += baseDailyUnits;
+                current.setDate(current.getDate() + 1);
+            }
+            return { units: totalUnits, bill: totalUnits * tariff };
         }
 
-        // 3. SUBSTRATE PROPAGATION MATHEMATICS
+        function renderKnowledgeDesk(species, targetElementId) {
+            let dest = document.getElementById(targetElementId);
+            dest.innerHTML = '';
+            let items = MUSHROOM_KNOWLEDGE[species] || [];
+            items.forEach(function(text) {
+                dest.innerHTML += '<div class="knowledge-item">🔹 ' + text + '</div>';
+            });
+        }
+
+        // ================= TAB 2: SUBSTRATE ENGINE (BY BAGS) =================
         function runSubstrateCalc() {
-            const species = document.getElementById('sub-species').value;
-            const qty = parseInt(document.getElementById('sub-qty').value) || 0;
-            const bagWeight = parseFloat(document.getElementById('sub-weight').value) || 0;
-            const profile = MUSHROOM_PROFILES[species];
+            var species = document.getElementById('sub-species').value;
+            if(!species) return;
+            var startDateStr = document.getElementById('sub-date').value;
+            var qty = parseInt(document.getElementById('sub-qty').value) || 0;
+            var bagWeight = parseFloat(document.getElementById('sub-weight').value) || 0;
+            var profile = MUSHROOM_PROFILES[species];
 
-            const totalWetMass = qty * bagWeight;
-            const dryMassNeeded = totalWetMass * (1.0 - (profile.moisture_pct / 100.0));
-            const waterNeeded = totalWetMass - dryMassNeeded;
-            const spawnNeeded = totalWetMass * (profile.spawn_rate_wet_pct / 100.0);
+            var totalWetMass = qty * bagWeight;
+            var dryMassNeeded = totalWetMass * (1.0 - (profile.moisture_pct / 100.0));
+            var waterNeeded = totalWetMass - dryMassNeeded;
+            var spawnNeeded = totalWetMass * (profile.spawn_rate_wet_pct / 100.0);
 
-            let baseMaterialDry = dryMassNeeded;
-            let supplementDry = 0;
+            var baseMaterialDry = dryMassNeeded; var supplementDry = 0;
             if(profile.requires_supplement) {
-                supplement_pct = profile.supplement_pct;
-                supplementDry = dryMassNeeded * (supplement_pct / 100.0);
+                supplementDry = dryMassNeeded * (profile.supplement_pct / 100.0);
                 baseMaterialDry = dryMassNeeded - supplementDry;
             }
 
-            let expectedFresh = profile.yield_basis === "dry_substrate" ? 
-                dryMassNeeded * (profile.expected_efficiency_pct / 100.0) : 
-                totalWetMass * (profile.expected_efficiency_pct / 100.0);
-            let expectedDry = expectedFresh * (profile.dry_recovery_pct / 100.0);
+            var expectedFresh = profile.yield_basis === "dry_substrate" ? dryMassNeeded * (profile.expected_efficiency_pct / 100.0) : totalWetMass * (profile.expected_efficiency_pct / 100.0);
+            var expectedDry = expectedFresh * (profile.dry_recovery_pct / 100.0);
 
-            // Fetch custom input costs
-            const costSub = parseFloat(document.getElementById('cost-sub').value) || 0;
-            const costBran = parseFloat(document.getElementById('cost-bran').value) || 0;
-            const costSpawn = parseFloat(document.getElementById('cost-spawn').value) || 0;
-            const costOver = parseFloat(document.getElementById('cost-overhead').value) || 0;
+            var costSub = parseFloat(document.getElementById('cost-sub').value) || 0;
+            var costBran = parseFloat(document.getElementById('cost-bran').value) || 0;
+            var costSpawn = parseFloat(document.getElementById('cost-spawn').value) || 0;
 
-            const totalCost = (baseMaterialDry * costSub) + (supplementDry * costBran) + (spawnNeeded * costSpawn) + costOver;
-            const grossFreshRevenue = expectedFresh * profile.fresh_price_per_kg;
+            let energyMetrics = computeClimatePowerDraw(startDateStr, profile.spawn_run_days, profile.harvest_days, profile.incubation_temp, profile.cropping_temp);
+            var totalCost = (baseMaterialDry * costSub) + (supplementDry * costBran) + (spawnNeeded * costSpawn) + energyMetrics.bill;
+            var grossFreshRevenue = expectedFresh * profile.fresh_price_per_kg;
 
-            // UI Injections
-            document.getElementById('sub-recipe-output').innerHTML = `
-                <div class="flex justify-between border-b border-gray-800 pb-1"><span>Total Wet Mass:</span><span class="text-white font-bold">${totalWetMass.toFixed(2)} kg</span></div>
-                <div class="flex justify-between border-b border-gray-800 pb-1"><span>Pure Water Input:</span><span class="text-blue-400 font-bold">${waterNeeded.toFixed(2)} L (${profile.moisture_pct}%)</span></div>
-                <div class="flex justify-between border-b border-gray-800 pb-1"><span>Grain Spawn needed:</span><span class="text-yellow-400 font-bold">${spawnNeeded.toFixed(2)} kg</span></div>
-                <div class="flex justify-between border-b border-gray-800 pb-1"><span>Base ${profile.base_substrate}:</span><span class="text-white">${baseMaterialDry.toFixed(2)} kg</span></div>
-                ${profile.requires_supplement ? `<div class="flex justify-between border-b border-gray-800 pb-1 text-xs text-amber-400"><span>Supp. (${profile.supplement_type}):</span><span>${supplementDry.toFixed(2)} kg</span></div>` : ''}
-            `;
+            document.getElementById('sub-recipe-output').innerHTML = 
+                '<div class="output-row"><span class="title-line">1. Total Combined Wet Mass Required</span><span class="formula-line">Formula: ' + qty + ' Bags × ' + bagWeight.toFixed(1) + ' kg Target Weight</span><span class="result-line">' + totalWetMass.toFixed(1) + ' kg Total</span></div>' +
+                '<div class="output-row"><span class="title-line">2. Pure Liquid Water Volume Required</span><span class="formula-line">Formula: ' + totalWetMass.toFixed(1) + ' kg Wet Mass × ' + profile.moisture_pct + '% Target Moisture</span><span class="result-line" style="color:#2563eb">' + waterNeeded.toFixed(1) + ' Liters</span></div>' +
+                '<div class="output-row"><span class="title-line">3. Total Dry Substrate Mass Needed</span><span class="formula-line">Formula: ' + totalWetMass.toFixed(1) + ' kg Wet Mass - ' + waterNeeded.toFixed(1) + ' L Water Volume</span><span class="result-line">' + baseMaterialDry.toFixed(1) + ' kg dry (' + profile.base_substrate + ')</span></div>' +
+                (profile.requires_supplement ? '<div class="output-row" style="color:#b45309;"><span class="title-line">↳ Supplement Component Breakdown</span><span class="formula-line">Formula: ' + dryMassNeeded.toFixed(1) + ' kg Combined Dry × ' + profile.supplement_pct + '% Addition Rate</span><span class="result-line">' + supplementDry.toFixed(1) + ' kg (' + profile.supplement_type + ')</span></div>' : '') +
+                '<div class="output-row"><span class="title-line">4. Pure Grain Spawn Required</span>' +
+                '<span class="formula-line">Formula: ' + totalWetMass.toFixed(1) + ' kg Wet Mass × ' + profile.spawn_rate_wet_pct + '% Spawn Ratio (' + species + ' Profile Target)</span>' +
+                '<span class="result-line" style="color:#b45309">' + spawnNeeded.toFixed(2) + ' kg Spawn (' + profile.spawn_rate_wet_pct.toFixed(1) + '% ratio)</span></div>';
 
-            document.getElementById('sub-financial-output').innerHTML = `
-                <div class="flex justify-between border-b border-gray-800 pb-1"><span>Est. Fresh Flush:</span><span class="text-accentgreen font-bold">${expectedFresh.toFixed(2)} kg</span></div>
-                <div class="flex justify-between border-b border-gray-800 pb-1"><span>Est. Dried Yield:</span><span class="text-yellow-500">${expectedDry.toFixed(2)} kg</span></div>
-                <div class="flex justify-between border-b border-gray-800 pb-1"><span>Total Runtime Cost:</span><span class="text-red-400">₹${totalCost.toFixed(2)}</span></div>
-                <div class="flex justify-between border-b border-gray-800 pb-1 font-bold"><span>Projected Net ROI:</span><span class="${grossFreshRevenue - totalCost >= 0 ? 'text-accentgreen':'text-red-500'}">₹${(grossFreshRevenue - totalCost).toFixed(2)}</span></div>
-            `;
+            document.getElementById('sub-financial-output').innerHTML = 
+                '<div class="output-row"><span>Est Fresh Crop:</span><strong style="color:#16A34A">' + expectedFresh.toFixed(1) + ' kg</strong></div>' +
+                '<div class="output-row"><span>Est Dried Yield:</span><strong>' + expectedDry.toFixed(1) + ' kg</strong></div>' +
+                '<div class="output-row"><span>HVAC Electricity Bill:</span><span style="color:#b45309; font-weight:600;">₹' + energyMetrics.bill.toFixed(0) + '</span></div>' +
+                '<div class="output-row"><span>Total Variable Cost:</span><span style="color:#dc2626">₹' + totalCost.toFixed(0) + '</span></div>' +
+                '<div class="output-row" style="font-weight:bold;"><span>Net Profit:</span><span style="color:' + (grossFreshRevenue - totalCost >= 0 ? '#16A34A':'#dc2626') + '">₹' + (grossFreshRevenue - totalCost).toFixed(0) + '</span></div>';
 
-            let today = new Date();
-            let incubationEnd = new Date(); incubationEnd.setDate(today.getDate() + profile.spawn_run_days);
-            let harvestEnd = new Date(); harvestEnd.setDate(incubationEnd.getDate() + 2 + profile.harvest_days);
+            var today = new Date(startDateStr);
+            var incubationEnd = new Date(today.getTime()); incubationEnd.setDate(today.getDate() + profile.spawn_run_days);
+            var harvestEnd = new Date(incubationEnd.getTime()); harvestEnd.setDate(incubationEnd.getDate() + 2 + profile.harvest_days);
 
-            document.getElementById('sub-timeline-output').innerHTML = `
-                <div class="bg-darkbg p-2.5 rounded border border-gray-800">🔬 <span class="text-gray-400">Incubate @ ${profile.incubation_temp}</span><br><strong class="text-white">Ends: ${formatDate(incubationEnd)}</strong></div>
-                <div class="bg-darkbg p-2.5 rounded border border-gray-800">🌬️ <span class="text-gray-400">Fruiting @ ${profile.cropping_temp}</span><br><strong class="text-accentgreen">Starts: ${formatDate(new Date(incubationEnd.getTime() + 2*24*60*60*1000))}</strong></div>
-                <div class="bg-darkbg p-2.5 rounded border border-gray-800">🏁 <span class="text-gray-400">Cycle Completion</span><br><strong class="text-white">Ends: ${formatDate(harvestEnd)}</strong></div>
-            `;
+            document.getElementById('sub-timeline-output').innerHTML = 
+                '<div class="time-card">📦 <b>Spawn Run Phase</b><br>Ends: ' + formatDate(incubationEnd) + '<br>Hold @ ' + profile.incubation_temp + '°C</div>' +
+                '<div class="time-card" style="background-color:#fff; border: 1px solid #edf2f7;">🌬️ <b>Fruiting Initiation</b><br>Starts: ' + formatDate(new Date(incubationEnd.getTime() + 2*24*60*60*1000)) + '<br>Hold @ ' + profile.cropping_temp + '°C</div>' +
+                '<div class="time-card" style="background-color:#fff; border: 1px solid #edf2f7;">🏁 <b>Final Flush Clear</b><br>Ends: ' + formatDate(harvestEnd) + '</div>';
+
+            let launchMonth = today.toLocaleString('default', { month: 'long' });
+            let insightDiv = document.getElementById('sub-climate-insight');
+            if (energyMetrics.units > 180) {
+                insightDiv.style.backgroundColor = "#fff1f2"; insightDiv.style.color = "#9f1239"; insightDiv.style.border = "1px solid #fecdd3";
+                insightDiv.innerHTML = "🚨 <b>High Thermal Stress Warning:</b> Your " + launchMonth + " launch window puts your crop cycle into extreme Sri Ganganagar ambient profiles. HVAC metrics will draw approx <b>" + energyMetrics.units.toFixed(0) + " units</b> to sustain cooling protocols.";
+            } else {
+                insightDiv.style.backgroundColor = "#f0fdf4"; insightDiv.style.color = "#166534"; insightDiv.style.border = "1px solid #bbf7d0";
+                insightDiv.innerHTML = "✅  <b>Optimal Energy Efficiency Window:</b> Excellent seasonal alignment. Your cultivation cycle steps into a moderate outdoor temperature baseline, reducing standard load profiles to just <b>" + energyMetrics.units.toFixed(0) + " total units</b>.";
+            }
+            renderKnowledgeDesk(species, 'sub-knowledge-desk');
         }
 
-        // 4. REVERSE DRY TARGET LOGIC (LOCKED TO JAN 1, 2027)
+        // ================= TAB 3: NEW REVERSE ENGINE LOGIC =================
         function runDryCalc() {
-            const species = document.getElementById('dry-species').value;
-            const targetDry = parseFloat(document.getElementById('dry-target-weight').value) || 0;
-            const profile = MUSHROOM_PROFILES[species];
+            var species = document.getElementById('dry-species').value;
+            var targetDry = parseFloat(document.getElementById('dry-target-weight').value) || 0;
+            var profile = MUSHROOM_PROFILES[species];
 
-            const requiredFresh = targetDry / (profile.dry_recovery_pct / 100.0);
-            let totalWetMass = 0;
-            let requiredDrySubstrate = 0;
+            var requiredFresh = targetDry / (profile.dry_recovery_pct / 100.0);
+            var totalWetMass = 0; var requiredDrySubstrate = 0;
 
             if (profile.yield_basis === "dry_substrate") {
                 requiredDrySubstrate = requiredFresh / (profile.expected_efficiency_pct / 100.0);
@@ -348,90 +564,166 @@
                 requiredDrySubstrate = totalWetMass * (1.0 - (profile.moisture_pct / 100.0));
             }
 
-            const waterNeeded = totalWetMass - requiredDrySubstrate;
-            const spawnNeeded = totalWetMass * (profile.spawn_rate_wet_pct / 100.0);
+            var waterNeeded = totalWetMass - requiredDrySubstrate;
+            var spawnNeeded = totalWetMass * (profile.spawn_rate_wet_pct / 100.0);
 
-            let baseMaterialDry = requiredDrySubstrate;
-            let supplementDry = 0;
+            var baseMaterialDry = requiredDrySubstrate; var supplementDry = 0;
             if(profile.requires_supplement) {
                 supplementDry = requiredDrySubstrate * (profile.supplement_pct / 100.0);
                 baseMaterialDry = requiredDrySubstrate - supplementDry;
             }
 
-            // Fixed Default Financial Indexes
-            const totalCost = (baseMaterialDry * 8) + (supplementDry * 25) + (spawnNeeded * 120) + 500;
-            const grossRevenueDry = targetDry * profile.dry_price_per_kg;
+            let energyMetrics = computeClimatePowerDraw("2027-01-01", profile.spawn_run_days, profile.harvest_days, profile.incubation_temp, profile.cropping_temp);
+            var totalCost = (baseMaterialDry * 8) + (supplementDry * 25) + (spawnNeeded * 120) + energyMetrics.bill;
+            var grossRevenueDry = targetDry * profile.dry_price_per_kg;
 
-            document.getElementById('dry-recipe-output').innerHTML = `
-                <div class="flex justify-between border-b border-gray-800 pb-1"><span>Fresh Equiv Req:</span><span class="text-white font-bold">${requiredFresh.toFixed(1)} kg</span></div>
-                <div class="flex justify-between border-b border-gray-800 pb-1"><span>Total Wet Mix Weight:</span><span class="text-white">${totalWetMass.toFixed(1)} kg</span></div>
-                <div class="flex justify-between border-b border-gray-800 pb-1"><span>Pure Liquid Water:</span><span class="text-blue-400">${waterNeeded.toFixed(1)} L</span></div>
-                <div class="flex justify-between border-b border-gray-800 pb-1"><span>Spawn Inoculant:</span><span class="text-yellow-400 font-bold">${spawnNeeded.toFixed(2)} kg</span></div>
-                <div class="flex justify-between border-b border-gray-800 pb-1"><span>Dry ${profile.base_substrate}:</span><span>${baseMaterialDry.toFixed(1)} kg</span></div>
-                ${profile.requires_supplement ? `<div class="flex justify-between border-b border-gray-800 text-xs text-amber-400"><span>${profile.supplement_type}:</span><span>${supplementDry.toFixed(1)} kg</span></div>` : ''}
-            `;
+            // FIXED: Applied 4-step reverse material matrix visualization pattern
+            document.getElementById('dry-recipe-output').innerHTML = 
+                '<div class="output-row"><span class="title-line">1. Fresh Yield Equivalent Target</span>' +
+                '<span class="formula-line">Formula: ' + targetDry.toFixed(1) + ' kg Dry Needed ÷ ' + profile.dry_recovery_pct + '% Recovery Rate</span>' +
+                '<span class="result-line">' + requiredFresh.toFixed(1) + ' kg Fresh Weight Required</span></div>' +
+                
+                '<div class="output-row"><span class="title-line">2. Total Bulk Wet Formulation Volume</span>' +
+                '<span class="formula-line">Formula: Reverse Mass Core Matrix (' + profile.yield_basis + ' basis calculation)</span>' +
+                '<span class="result-line">' + totalWetMass.toFixed(1) + ' kg Combined Wet Mass</span></div>' +
+                
+                '<div class="output-row"><span class="title-line">3. Pure Water Balancing Volume</span>' +
+                '<span class="formula-line">Formula: ' + totalWetMass.toFixed(1) + ' kg Wet Mix - ' + requiredDrySubstrate.toFixed(1) + ' kg Solid dry matter</span>' +
+                '<span class="result-line" style="color:#2563eb">' + waterNeeded.toFixed(1) + ' Liters addition</span></div>' +
+                
+                '<div class="output-row"><span class="title-line">4. Dry Substrate and Spawn Breakdown</span>' +
+                '<span class="formula-line">Base Dry Base: ' + baseMaterialDry.toFixed(1) + ' kg (' + profile.base_substrate + ')</span>' +
+                (profile.requires_supplement ? '<span class="formula-line">Supplement Matrix: ' + supplementDry.toFixed(1) + ' kg</span>' : '') +
+                '<span class="result-line" style="color:#b45309">' + spawnNeeded.toFixed(2) + ' kg Spawn Required (' + profile.spawn_rate_wet_pct.toFixed(1) + '% Ratio)</span></div>';
 
-            document.getElementById('dry-financial-output').innerHTML = `
-                <div class="flex justify-between border-b border-gray-800 pb-1"><span>Dry Order Revenue:</span><span class="text-accentgreen font-bold">₹${grossRevenueDry.toLocaleString()}</span></div>
-                <div class="flex justify-between border-b border-gray-800 pb-1"><span>Est. Cost Layout:</span><span class="text-red-400">₹${totalCost.toFixed(0)}</span></div>
-                <div class="flex justify-between border-b border-gray-800 pb-1 font-bold"><span>Net Profit:</span><span class="text-accentgreen">₹${(grossRevenueDry - totalCost).toFixed(0)}</span></div>
-            `;
+            document.getElementById('dry-financial-output').innerHTML = 
+                '<div class="output-row"><span>Contract Order Value:</span><strong style="color:#16A34A">₹' + grossRevenueDry.toLocaleString() + '</strong></div>' +
+                '<div class="output-row"><span>Projected 2027 HVAC Outlay:</span><span style="color:#b45309">₹' + energyMetrics.bill.toFixed(0) + '</span></div>' +
+                '<div class="output-row"><span>Total Production Outlay:</span><span style="color:#dc2626">₹' + totalCost.toFixed(0) + '</span></div>' +
+                '<div class="output-row" style="font-weight:bold;"><span>Net Valuation Margin:</span><span style="color:#16A34A">₹' + (grossRevenueDry - totalCost).toFixed(0) + '</span></div>';
 
-            // Hardcoded Date Constraints: January 1, 2027
-            let fixedStart = new Date(2027, 0, 1);
-            let incubationEnd = new Date(2027, 0, 1); incubationEnd.setDate(fixedStart.getDate() + profile.spawn_run_days);
-            let harvestEnd = new Date(incubationEnd.getTime()); harvestEnd.setDate(incubationEnd.getDate() + 2 + profile.harvest_days);
+            var fixedStart = new Date(2027, 0, 1);
+            var incubationEnd = new Date(2027, 0, 1); incubationEnd.setDate(fixedStart.getDate() + profile.spawn_run_days);
+            var harvestEnd = new Date(incubationEnd.getTime()); harvestEnd.setDate(incubationEnd.getDate() + 2 + profile.harvest_days);
 
-            document.getElementById('dry-timeline-output').innerHTML = `
-                <div class="bg-darkbg p-2.5 rounded border border-gray-800">🧫 <span class="text-gray-400">Inoculate Lab Batch</span><br><strong class="text-white">${formatDate(fixedStart)}</strong></div>
-                <div class="bg-darkbg p-2.5 rounded border border-gray-800">📦 <span class="text-gray-400">Spawn Run Ends</span><br><strong class="text-yellow-500">${formatDate(incubationEnd)}</strong></div>
-                <div class="bg-darkbg p-2.5 rounded border border-gray-800">🧺 <span class="text-gray-400">Harvest Complete</span><br><strong class="text-accentgreen">${formatDate(harvestEnd)}</strong></div>
-            `;
+            document.getElementById('dry-timeline-output').innerHTML = 
+                '<div class="time-card" style="background-color:#fff; border: 1px solid #edf2f7;">🧫 <b>Inoculation Day</b><br>' + formatDate(fixedStart) + '</div>' +
+                '<div class="time-card">📦 <b>Spawn Run Complete</b><br>' + formatDate(incubationEnd) + '</div>' +
+                '<div class="time-card" style="background-color:#fff; border: 1px solid #edf2f7;">🧺 <b>Crop Dried Out</b><br>' + formatDate(harvestEnd) + '</div>';
         }
 
-        // 5. SECURE LOCAL RECORD MANAGEMENT DATABASE
-        function logBatchRun() {
-            const species = document.getElementById('sub-species').value;
-            const qty = parseInt(document.getElementById('sub-qty').value) || 0;
-            const bagWeight = parseFloat(document.getElementById('sub-weight').value) || 0;
-            const profile = MUSHROOM_PROFILES[species];
+        // ================= TAB 3: AVAILABLE SPAWN CALCULATOR =================
+        function runAvailSpawnCalc() {
+            var species = document.getElementById('spawn-species').value;
+            if(!species) return;
+            var startDateStr = document.getElementById('spawn-date').value;
+            var availableSpawn = parseFloat(document.getElementById('spawn-weight-input').value) || 0;
+            var targetBagSize = parseFloat(document.getElementById('spawn-bag-size').value) || 2.0;
+            var profile = MUSHROOM_PROFILES[species];
 
-            const totalWetMass = qty * bagWeight;
-            const dryMassNeeded = totalWetMass * (1.0 - (profile.moisture_pct / 100.0));
-            const spawnNeeded = totalWetMass * (profile.spawn_rate_wet_pct / 100.0);
+            // Reverse math calculations driven by available spawn weight assets
+            var totalWetMass = availableSpawn / (profile.spawn_rate_wet_pct / 100.0);
+            var totalBagsPossible = Math.floor(totalWetMass / targetBagSize);
+            
+            var dryMassNeeded = totalWetMass * (1.0 - (profile.moisture_pct / 100.0));
+            var waterNeeded = totalWetMass - dryMassNeeded;
 
-            let expectedFresh = profile.yield_basis === "dry_substrate" ? 
-                dryMassNeeded * (profile.expected_efficiency_pct / 100.0) : 
-                totalWetMass * (profile.expected_efficiency_pct / 100.0);
+            var baseMaterialDry = dryMassNeeded; var supplementDry = 0;
+            if(profile.requires_supplement) {
+                supplementDry = dryMassNeeded * (profile.supplement_pct / 100.0);
+                baseMaterialDry = dryMassNeeded - supplementDry;
+            }
 
-            // Simple Cost Fetch
-            const baseMaterialDry = profile.requires_supplement ? dryMassNeeded * (1 - profile.supplement_pct/100) : dryMassNeeded;
-            const suppDry = dryMassNeeded - baseMaterialDry;
-            const totalCost = (baseMaterialDry * 8) + (suppDry * 25) + (spawnNeeded * 120) + 500;
-            const grossRev = expectedFresh * profile.fresh_price_per_kg;
+            var expectedFresh = profile.yield_basis === "dry_substrate" ? dryMassNeeded * (profile.expected_efficiency_pct / 100.0) : totalWetMass * (profile.expected_efficiency_pct / 100.0);
+            var expectedDry = expectedFresh * (profile.dry_recovery_pct / 100.0);
 
-            let today = new Date();
-            let incubationEnd = new Date(); incubationEnd.setDate(today.getDate() + profile.spawn_run_days);
-            let harvestEnd = new Date(); harvestEnd.setDate(incubationEnd.getDate() + 2 + profile.harvest_days);
+            var costSub = parseFloat(document.getElementById('cost-sub').value) || 8;
+            var costBran = parseFloat(document.getElementById('cost-bran').value) || 25;
+            var costSpawn = parseFloat(document.getElementById('cost-spawn').value) || 120;
 
-            const newBatch = {
-                id: "BAT-" + Date.now().toString().slice(-6),
-                created: formatDate(today),
+            let energyMetrics = computeClimatePowerDraw(startDateStr, profile.spawn_run_days, profile.harvest_days, profile.incubation_temp, profile.cropping_temp);
+            var totalCost = (baseMaterialDry * costSub) + (supplementDry * costBran) + (availableSpawn * costSpawn) + energyMetrics.bill;
+            var grossFreshRevenue = expectedFresh * profile.fresh_price_per_kg;
+
+            // Render Tab 3 specific 4-Step Output Layout Pattern Card Matrices
+            document.getElementById('spawn-recipe-output').innerHTML = 
+                '<div class="output-row"><span class="title-line">1. Total Combined Wet Mass Capacity</span><span class="formula-line">Formula: ' + availableSpawn.toFixed(2) + ' kg Available Spawn ÷ ' + profile.spawn_rate_wet_pct + '% Spawn Ratio</span><span class="result-line">' + totalWetMass.toFixed(1) + ' kg Max Mixed Substrate</span></div>' +
+                '<div class="output-row"><span class="title-line">2. Total Operational Bag Output</span><span class="formula-line">Formula: ' + totalWetMass.toFixed(1) + ' kg Wet Mass ÷ ' + targetBagSize.toFixed(1) + ' kg Size/Bag</span><span class="result-line" style="color:#1e3a8a">' + totalBagsPossible + ' Bags Can Be Packed</span></div>' +
+                '<div class="output-row"><span class="title-line">3. Pure Liquid Water Requirement</span><span class="formula-line">Formula: ' + totalWetMass.toFixed(1) + ' kg Combined Mass × ' + profile.moisture_pct + '% Profile Target</span><span class="result-line" style="color:#2563eb">' + waterNeeded.toFixed(1) + ' Liters Soak Water</span></div>' +
+                '<div class="output-row"><span class="title-line">4. Total Dry Substrate To Weigh Out</span><span class="formula-line">Formula: ' + totalWetMass.toFixed(1) + ' kg Combined Mass - ' + waterNeeded.toFixed(1) + ' L Water Volume</span><span class="result-line">' + baseMaterialDry.toFixed(1) + ' kg dry (' + profile.base_substrate + ')</span></div>' +
+                (profile.requires_supplement ? '<div class="output-row" style="color:#b45309;"><span class="title-line">↳ Required Supplement Bran Dry Weight</span><span class="formula-line">Formula: ' + dryMassNeeded.toFixed(1) + ' kg Total Dry × ' + profile.supplement_pct + '% Bran Ratio</span><span class="result-line">' + supplementDry.toFixed(1) + ' kg (' + profile.supplement_type + ')</span></div>' : '');
+
+            document.getElementById('spawn-financial-output').innerHTML = 
+                '<div class="output-row"><span>Projected Fresh Yield:</span><strong style="color:#16A34A">' + expectedFresh.toFixed(1) + ' kg</strong></div>' +
+                '<div class="output-row"><span>Projected Dried Yield:</span><strong>' + expectedDry.toFixed(1) + ' kg</strong></div>' +
+                '<div class="output-row"><span>Climate HVAC Power Bill:</span><span style="color:#b45309; font-weight:600;">₹' + energyMetrics.bill.toFixed(0) + '</span></div>' +
+                '<div class="output-row"><span>Total Operational Cost:</span><span style="color:#dc2626">₹' + totalCost.toFixed(0) + '</span></div>' +
+                '<div class="output-row" style="font-weight:bold;"><span>Net Profit Return:</span><span style="color:' + (grossFreshRevenue - totalCost >= 0 ? '#16A34A':'#dc2626') + '">₹' + (grossFreshRevenue - totalCost).toFixed(0) + '</span></div>';
+
+            var today = new Date(startDateStr);
+            var incubationEnd = new Date(today.getTime()); incubationEnd.setDate(today.getDate() + profile.spawn_run_days);
+            var harvestEnd = new Date(incubationEnd.getTime()); harvestEnd.setDate(incubationEnd.getDate() + 2 + profile.harvest_days);
+
+            document.getElementById('spawn-timeline-output').innerHTML = 
+                '<div class="time-card">📦 <b>Incubation Complete</b><br>Date: ' + formatDate(incubationEnd) + '<br>Target: ' + profile.incubation_temp + '°C</div>' +
+                '<div class="time-card" style="background-color:#fff; border: 1px solid #edf2f7;">🌬️ <b>Fruiting Window</b><br>Starts: ' + formatDate(new Date(incubationEnd.getTime() + 2*24*60*60*1000)) + '<br>Target: ' + profile.cropping_temp + '°C</div>' +
+                '<div class="time-card" style="background-color:#fff; border: 1px solid #edf2f7;">🏁 <b>Final Harvest Clear</b><br>Date: ' + formatDate(harvestEnd) + '</div>';
+
+            let launchMonth = today.toLocaleString('default', { month: 'long' });
+            let insightDiv = document.getElementById('spawn-climate-insight');
+            if (energyMetrics.units > 180) {
+                insightDiv.style.backgroundColor = "#fff1f2"; insightDiv.style.color = "#9f1239"; insightDiv.style.border = "1px solid #fecdd3";
+                insightDiv.innerHTML = "🚨 <b>High Thermal Stress Warning:</b> Your " + launchMonth + " launch window puts your crop cycle into extreme Sri Ganganagar ambient profiles. HVAC metrics will draw approx <b>" + energyMetrics.units.toFixed(0) + " units</b> to sustain cooling protocols.";
+            } else {
+                insightDiv.style.backgroundColor = "#f0fdf4"; insightDiv.style.color = "#166534"; insightDiv.style.border = "1px solid #bbf7d0";
+                insightDiv.innerHTML = "✅  <b>Optimal Energy Efficiency Window:</b> Excellent seasonal alignment. Your cultivation cycle steps into a moderate outdoor temperature baseline, reducing standard load profiles to just <b>" + energyMetrics.units.toFixed(0) + " total units</b>.";
+            }
+            renderKnowledgeDesk(species, 'spawn-knowledge-desk');
+        }
+
+        function logBatchRun(sourceMode) {
+            var species = (sourceMode === 'substrate') ? document.getElementById('sub-species').value : document.getElementById('spawn-species').value;
+            var startDateStr = (sourceMode === 'substrate') ? document.getElementById('sub-date').value : document.getElementById('spawn-date').value;
+            var profile = MUSHROOM_PROFILES[species];
+            
+            var qty = 0; var totalWetMass = 0;
+            if(sourceMode === 'substrate') {
+                qty = parseInt(document.getElementById('sub-qty').value) || 0;
+                var bagWeight = parseFloat(document.getElementById('sub-weight').value) || 0;
+                totalWetMass = qty * bagWeight;
+            } else {
+                var availableSpawn = parseFloat(document.getElementById('spawn-weight-input').value) || 0;
+                var targetBagSize = parseFloat(document.getElementById('spawn-bag-size').value) || 2.0;
+                totalWetMass = availableSpawn / (profile.spawn_rate_wet_pct / 100.0);
+                qty = Math.floor(totalWetMass / targetBagSize);
+            }
+
+            var dryMassNeeded = totalWetMass * (1.0 - (profile.moisture_pct / 100.0));
+            var spawnNeeded = totalWetMass * (profile.spawn_rate_wet_pct / 100.0);
+            var expectedFresh = profile.yield_basis === "dry_substrate" ? dryMassNeeded * (profile.expected_efficiency_pct / 100.0) : totalWetMass * (profile.expected_efficiency_pct / 100.0);
+
+            var baseMaterialDry = profile.requires_supplement ? dryMassNeeded * (1 - profile.supplement_pct/100) : dryMassNeeded;
+            var suppDry = dryMassNeeded - baseMaterialDry;
+            let energyMetrics = computeClimatePowerDraw(startDateStr, profile.spawn_run_days, profile.harvest_days, profile.incubation_temp, profile.cropping_temp);
+            var totalCost = (baseMaterialDry * 8) + (suppDry * 25) + (spawnNeeded * 120) + energyMetrics.bill;
+            var grossRev = expectedFresh * profile.fresh_price_per_kg;
+
+            var newBatch = {
+                id: "BAT-" + Date.now().toString().slice(-5),
+                created: startDateStr,
                 species: species,
                 qty: qty,
                 wet_mass: totalWetMass.toFixed(1),
                 cost: totalCost.toFixed(0),
                 revenue: grossRev.toFixed(0),
-                harvest_date: formatDate(harvestEnd),
                 lost_bags: 0,
                 actual_yield: 0.0,
                 status: "INCUBATING"
             };
 
             batches.push(newBatch);
-            saveData();
-            renderBatchesTable();
-            alert("Batch run locked securely into local offline storage indexes!");
+            saveData(); renderBatchesTable();
+            alert("Batch successfully saved to terminal storage.");
         }
 
         function saveData() {
@@ -440,72 +732,40 @@
         }
 
         function updateKPICounters() {
-            let totalCost = 0;
-            let totalRev = 0;
-            batches.forEach(b => {
-                totalCost += parseFloat(b.cost);
-                totalRev += parseFloat(b.revenue);
-            });
+            var totalCost = 0; var totalRev = 0;
+            batches.forEach(function(b) { totalCost += parseFloat(b.cost); totalRev += parseFloat(b.revenue); });
             document.getElementById('kpi-cost').innerText = "₹" + totalCost.toLocaleString();
             document.getElementById('kpi-rev').innerText = "₹" + totalRev.toLocaleString();
         }
 
         function updateQCMetrics(idx) {
-            const lost = parseInt(document.getElementById(`lost-${idx}`).value) || 0;
-            const actual = parseFloat(document.getElementById(`actual-${idx}`).value) || 0;
-            
-            batches[idx].lost_bags = lost;
-            batches[idx].actual_yield = actual;
-            batches[idx].status = "COMPLETED";
-
-            const initialBags = batches[idx].qty;
-            const successRate = ((initialBags - lost) / initialBags) * 100;
-
-            if (successRate < 90) {
-                alert(`🚨 QA System Warning: Sterilization Success dropped to ${successRate.toFixed(1)}% on this run. Check validation parameters immediately.`);
-            }
-
-            saveData();
-            renderBatchesTable();
+            var lost = parseInt(document.getElementById('lost-' + idx).value) || 0;
+            var actual = parseFloat(document.getElementById('actual-' + idx).value) || 0;
+            batches[idx].lost_bags = lost; batches[idx].actual_yield = actual; batches[idx].status = "COMPLETED";
+            saveData(); renderBatchesTable();
         }
 
         function clearDatabase() {
-            if(confirm("Are you sure you want to completely wipe out all logged enterprise batch records?")) {
-                batches = [];
-                saveData();
-                renderBatchesTable();
-            }
+            if(confirm("Wipe logs permanently?")) { batches = []; saveData(); renderBatchesTable(); }
         }
 
         function renderBatchesTable() {
-            const tbody = document.getElementById('batch-table-body');
+            var tbody = document.getElementById('batch-table-body');
             tbody.innerHTML = '';
-            
             if(batches.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-gray-600 text-xs">No execution batches logged in this terminal index yet.</td></tr>`;
-                updateKPICounters();
-                return;
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#999; font-size:12px; padding:20px;">No records saved.</td></tr>';
+                updateKPICounters(); return;
             }
-
-            batches.forEach((b, idx) => {
-                tbody.innerHTML += `
-                    <tr class="border-b border-gray-800 text-xs sm:text-sm hover:bg-gray-900/20">
-                        <td class="p-3 font-mono text-gray-400">${b.id}</td>
-                        <td class="p-3 text-gray-500">${b.created}</td>
-                        <td class="p-3 text-white font-semibold">${b.species}</td>
-                        <td class="p-3">${b.wet_mass} kg <span class="text-gray-600">(${b.qty} bags)</span></td>
-                        <td class="p-3">
-                            <input type="number" id="lost-${idx}" value="${b.lost_bags}" class="w-12 bg-darkbg border border-gray-700 rounded text-center text-red-400 p-0.5">
-                        </td>
-                        <td class="p-3">
-                            <input type="number" id="actual-${idx}" value="${b.actual_yield}" step="0.1" class="w-16 bg-darkbg border border-gray-700 rounded text-center text-accentgreen p-0.5"> kg
-                        </td>
-                        <td class="p-3">
-                            <button onclick="updateQCMetrics(${idx})" class="bg-gray-800 border border-gray-700 hover:bg-gray-700 text-gray-200 px-2 py-1 rounded transition-all">
-                                ${b.status === 'COMPLETED' ? '🔄 Re-Sync' : '✅ Verify'}
-                            </button>
-                        </td>
-                    </tr>`;
+            batches.forEach(function(b, idx) {
+                tbody.innerHTML += '<tr>' +
+                    '<td style="font-family:mono; font-size:12px;">' + b.id + '</td>' +
+                    '<td style="font-size:12px; color:#666;">' + b.created + '</td>' +
+                    '<td style="font-weight:bold; color:#4A3728;">' + b.species + '</td>' +
+                    '<td>' + b.wet_mass + ' kg <span style="font-size:11px; color:#888;">(' + b.qty + ' bags)</span></td>' +
+                    '<td><input type="number" id="lost-' + idx + '" value="' + b.lost_bags + '" style="width:40px; text-align:center;"></td>' +
+                    '<td><input type="number" id="actual-' + idx + '" value="' + b.actual_yield + '" step="0.1" style="width:55px; text-align:center;"> kg</td>' +
+                    '<td><button onclick="updateQCMetrics(' + idx + ')" style="padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">Verify</button></td>' +
+                '</tr>';
             });
             updateKPICounters();
         }
